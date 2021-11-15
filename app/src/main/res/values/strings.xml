@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Collections and maps</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="operations">Operations</string>
+    <string name="threads">Threads</string>
+    <string name="button">Calculate</string>
+    <string name="collections">Collections</string>
+    <string name="maps">Maps</string>
+</resources>
