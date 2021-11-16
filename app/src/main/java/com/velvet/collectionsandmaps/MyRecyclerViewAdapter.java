@@ -15,10 +15,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private String[] mData;
     private boolean[] mStates;
     private String[] mExecTime;
-    private LayoutInflater mInflater;
 
     MyRecyclerViewAdapter(Context context, String[] data, boolean[] states, String[] execTime) {
-        this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mStates = states;
         this.mExecTime = execTime;
@@ -27,20 +25,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recycler_view_cell, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_cell, parent, false);
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.operationName.setText(mData[position]);
-        if (mStates[position] == true) {
-            holder.progressBar.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.progressBar.setVisibility(View.GONE);
-        }
-        holder.executionTime.setText(mExecTime[position]);
+        holder.bind(position);
     }
 
     @Override
@@ -60,6 +52,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             executionTime = itemView.findViewById(R.id.executionTime);
         }
 
+        void bind(int position) {
+            operationName.setText(mData[position]);
+            if (mStates[position] == true) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            else {
+                progressBar.setVisibility(View.GONE);
+            }
+            executionTime.setText(mExecTime[position]);
+        }
     }
 
     void executionCompleteInCell(int id, String time) {

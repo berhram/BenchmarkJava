@@ -1,17 +1,12 @@
 package com.velvet.collectionsandmaps;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.velvet.collectionsandmaps.ui.main.SectionsPagerAdapter;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.velvet.collectionsandmaps.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,10 +20,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this);
+        ViewPager2 viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
+        new TabLayoutMediator(tabs, viewPager,
+                (tab, position) -> tab.setText(getResources().getStringArray(R.array.tabTitles)[position])
+        ).attach();
     }
 }
