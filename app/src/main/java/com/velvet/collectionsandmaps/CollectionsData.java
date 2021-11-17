@@ -2,11 +2,7 @@ package com.velvet.collectionsandmaps;
 
 import android.content.Context;
 
-public class CollectionsData {
-
-    String[] names;
-    boolean[] states;
-    String[] execTime;
+public class CollectionsData extends Data {
 
     CollectionsData(Context context) {
         this.names = context.getResources().getStringArray(R.array.list_operations_names);

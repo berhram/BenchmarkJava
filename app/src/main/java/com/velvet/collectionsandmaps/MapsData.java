@@ -2,11 +2,7 @@ package com.velvet.collectionsandmaps;
 
 import android.content.Context;
 
-public class MapsData {
-
-    String[] names;
-    boolean[] states;
-    String[] execTime;
+public class MapsData extends Data {
 
     MapsData(Context context) {
         this.names = context.getResources().getStringArray(R.array.map_operations_names);

@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,17 +28,18 @@ public class CollectionsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        final Button button = view.findViewById(R.id.calculate_button);
-        final EditText operations = view.findViewById(R.id.operationsInput);
-        final TextView textView = view.findViewById(R.id.operationsLabel);
+        View view = inflater.inflate( R.layout.fragment_main, container, false);
+        final Button calculateButton = view.findViewById(R.id.calculate_button);
+        final EditText operationsInput = view.findViewById(R.id.operationsInput);
+        final TextView operationsLabel = view.findViewById(R.id.operationsLabel);
         final RecyclerView recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
         CollectionsData collectionsData = new CollectionsData(getContext());
-        final MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(view.getContext(), getResources().getStringArray(R.array.list_operations_names), collectionsData.states, collectionsData.execTime);
+        final MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(view.getContext(), collectionsData.names, collectionsData.states, collectionsData.execTime);
         recyclerView.setAdapter(adapter);
-        button.setOnClickListener(v -> {
-            //under construction
+        calculateButton.setOnClickListener(v -> {
+            AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 0, Integer.parseInt(operationsInput.getText().toString()), adapter);
+            addingToStartArrayList.execute();
             }
         );
         return view;
