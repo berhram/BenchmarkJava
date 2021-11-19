@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -27,6 +28,7 @@ public class MapsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        CustomViewModel viewModel = new ViewModelProvider(this).get(CustomViewModel.class);
         final Button calculateButton = view.findViewById(R.id.calculate_button);
         final EditText operationsInput = view.findViewById(R.id.operationsInput);
         final TextView operationsLabel = view.findViewById(R.id.operationsLabel);
