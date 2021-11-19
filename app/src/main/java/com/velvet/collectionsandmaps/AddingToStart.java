@@ -24,13 +24,16 @@ public class AddingToStart extends AsyncTask<Void, Void, Void> {
                 adapter.executionStartInCell(id);
             }
         });
+        for (int i = 0; i < operations; i++) {
+            list.add(0, null);
+        }
         double execTime = (System.nanoTime() - startTime)/1000000;
         DecimalFormat twoDForm = new DecimalFormat("0.000000");
         twoDForm.format(execTime);
         String output = Double.toString(execTime);
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override public void run() {
-                adapter.executionCompleteInCell(id, output+ " ms");
+                adapter.executionCompleteInCell(id, output);
             }
         });
         return null;

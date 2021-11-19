@@ -4,7 +4,9 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/rectangle">
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="match_parent"
@@ -12,19 +14,15 @@
         app:layout_constraintTop_toTopOf="parent"
         android:indeterminate="true" />
     <TextView
+        android:id="@+id/executionTimeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/progress_circular"/>
+    <TextView
         android:id="@+id/operationName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/progress_circular"
-        android:background="@color/purple_200"/>
-    <TextView
-        android:id="@+id/executionTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/operationName"
-        android:background="@color/purple_200"/>
-
-
+        app:layout_constraintTop_toBottomOf="@id/executionTimeText"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

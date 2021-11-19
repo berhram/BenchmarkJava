@@ -1,8 +1,6 @@
 package com.velvet.collectionsandmaps;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollectionsFragment extends Fragment {
 
@@ -29,21 +22,26 @@ public class CollectionsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate( R.layout.fragment_main, container, false);
+        return view;
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         final Button calculateButton = view.findViewById(R.id.calculate_button);
         final EditText operationsInput = view.findViewById(R.id.operationsInput);
         final TextView operationsLabel = view.findViewById(R.id.operationsLabel);
         final RecyclerView recyclerView = view.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
-        CollectionsData collectionsData = new CollectionsData(getContext());
-        final MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(view.getContext(), collectionsData.names, collectionsData.states, collectionsData.execTime);
+        int numberOfColumns = 3;
+        StaggeredGridLayoutManager lm =
+                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(lm);
+        Data collectionsData = new Data(getContext(), true);
+        final MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(view.getContext(), collectionsData, numberOfColumns);
         recyclerView.setAdapter(adapter);
         calculateButton.setOnClickListener(v -> {
-            AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 0, Integer.parseInt(operationsInput.getText().toString()), adapter);
-            addingToStartArrayList.execute();
-            }
+                    AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 1, Integer.parseInt(operationsInput.getText().toString()), adapter);
+                    addingToStartArrayList.execute();
+                }
         );
-        return view;
     }
-
-
 }
