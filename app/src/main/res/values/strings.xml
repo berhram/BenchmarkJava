@@ -11,27 +11,35 @@
     <string name="maps">Maps</string>
     <string name="milliseconds">ms</string>
     <string name="notApplicable">N/A</string>
-    <string-array name="list_names">
-        <item>ArrayList</item>
-        <item>LinkedList</item>
-        <item>CopyOnWriteArrayList</item>
+    <string-array name="list_items">
+        <item>Adding to start in ArrayList</item>
+        <item>Adding to middle in ArrayList</item>
+        <item>Adding to end in ArrayList</item>
+        <item>Search in ArrayList</item>
+        <item>Removing from start in ArrayList</item>
+        <item>Removing from middle in ArrayList</item>
+        <item>Removing from end in ArrayList</item>
+        <item>Adding to start in LinkedList</item>
+        <item>Adding to middle in LinkedList</item>
+        <item>Adding to end in LinkedList</item>
+        <item>Search in LinkedList</item>
+        <item>Removing from start in LinkedList</item>
+        <item>Removing from middle in LinkedList</item>
+        <item>Removing from end in LinkedList</item>
+        <item>Adding to start in CopyOnWriteArrayList</item>
+        <item>Adding to middle in CopyOnWriteArrayList</item>
+        <item>Adding to end in CopyOnWriteArrayList</item>
+        <item>Search in CopyOnWriteArrayList</item>
+        <item>Removing from start in CopyOnWriteArrayList</item>
+        <item>Removing from middle in CopyOnWriteArrayList</item>
+        <item>Removing from end in CopyOnWriteArrayList</item>
     </string-array>
-    <string-array name="list_titles">
-        <item>Adding to start</item>
-        <item>Adding to middle</item>
-        <item>Adding to end</item>
-        <item>Search in</item>
-        <item>Removing from start</item>
-        <item>Removing from middle</item>
-        <item>Removing from end</item>
-    </string-array>
-    <string-array name="map_names">
-        <item>TreeMap</item>
-        <item>HashMap</item>
-    </string-array>
-    <string-array name="map_titles">
-        <item>Adding to</item>
-        <item>Search in</item>
-        <item>Removing from</item>
+    <string-array name="map_items">
+        <item>Adding to TreeMap</item>
+        <item>Search in TreeMap</item>
+        <item>Removing from TreeMap</item>
+        <item>Adding to HashMap</item>
+        <item>Search in HashMap</item>
+        <item>Removing from HashMap</item>
     </string-array>
 </resources>

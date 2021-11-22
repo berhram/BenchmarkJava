@@ -13,7 +13,7 @@ public class AddingToStart extends AsyncTask<Void, Void, Void> {
 
     private int operations;
     private int id;
-    private MyRecyclerViewAdapter adapter;
+    private CustomRecyclerViewAdapter adapter;
     private List list;
 
     @Override
@@ -21,7 +21,8 @@ public class AddingToStart extends AsyncTask<Void, Void, Void> {
         double startTime = System.nanoTime();
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override public void run() {
-                adapter.executionStartInCell(id);
+
+                adapter.notifyItemChanged(id);
             }
         });
         for (int i = 0; i < operations; i++) {
@@ -33,12 +34,12 @@ public class AddingToStart extends AsyncTask<Void, Void, Void> {
         String output = Double.toString(execTime);
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override public void run() {
-                adapter.executionCompleteInCell(id, output);
+                adapter.editExecutionTime(id, output);
             }
         });
         return null;
     }
-    public AddingToStart(List list , int id, int operations, MyRecyclerViewAdapter adapter) {
+    public AddingToStart(List list , int id, int operations, CustomRecyclerViewAdapter adapter) {
         this.adapter = adapter;
         this.id = id;
         this.operations = operations;
