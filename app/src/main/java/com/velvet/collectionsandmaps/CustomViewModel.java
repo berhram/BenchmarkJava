@@ -6,36 +6,27 @@ import androidx.lifecycle.ViewModel;
 
 public class CustomViewModel extends ViewModel {
 
-    private MutableLiveData<String> mName = new MutableLiveData<>();
-    private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-    private MutableLiveData<Integer> mNumberOfColumns = new MutableLiveData<>();
-    private MutableLiveData<String[]> mArray = new MutableLiveData<>();
+    private final int index;
 
-    public void setName(String name) {
-        mName.setValue(name);
+    public CustomViewModel(int index) {
+        this.index = index;
     }
 
-    public String getName() {
-        return mName.getValue();
+    public int getNumberOfColumn() {
+        if (index==0) {
+            return 3;
+        }
+        else  {
+            return 2;
+        }
     }
 
-    public void setNumberOfColumns(int numberOfColumns) {
-        mNumberOfColumns.setValue(numberOfColumns);
+    public int getIndex() {
+        return index;
     }
 
-    public Integer getNumberOfColumns() {
-        return mNumberOfColumns.getValue();
-    }
-
-    public void setIndex(int index) {
-        mIndex.setValue(index);
-    }
-
-    public void setArray(String[] array) {
-        mArray.setValue(array);
-    }
-
-    public String[] getArray() {
-        return mArray.getValue();
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 }

@@ -2,102 +2,81 @@ package com.velvet.collectionsandmaps;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import com.velvet.collectionsandmaps.databinding.ItemBenchmarksBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.ItemViewHolder> {
 
-public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private final List<InputData> items = new ArrayList<>();
 
-        private ArrayList<InputData> arrayList;
-
-        public CustomRecyclerViewAdapter() {
-            this.arrayList = new ArrayList<InputData>();
-        }
-
-        public void setArrayList(ArrayList<InputData> arrayList) {
-            this.arrayList = arrayList;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item,parent,false);
-            return new ItemViewHolder(rootView);
+        public void addInputData(InputData inputData) {
+            items.add(inputData);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ItemViewHolder viewHolder= (ItemViewHolder) holder;
+        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ItemViewHolder(ItemBenchmarksBinding.inflate(LayoutInflater.from(parent.getContext())));
+        }
+
+        @Override
+        public void onBindViewHolder(ItemViewHolder holder, int position) {
+            ItemViewHolder viewHolder = holder;
             viewHolder.bind(position);
         }
 
         @Override
         public int getItemCount() {
-            return arrayList.size();
-        }
-
-        public void updateList(final ArrayList<InputData> arrayList) {
-            this.arrayList.clear();
-            this.arrayList = arrayList;
-            notifyDataSetChanged();
+            return items.size();
         }
 
         public class ItemViewHolder extends RecyclerView.ViewHolder {
-            @BindView(R.id.item_name)
-            TextView itemName;
-            @BindView(R.id.item_execution_time)
-            TextView itemExecutionTime;
-            @BindView(R.id.item_progress_bar)
-            ProgressBar itemProgressBar;
+            private ItemBenchmarksBinding binding;
 
-            public ItemViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
+            public ItemViewHolder(ItemBenchmarksBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
 
             void bind(int position) {
-                InputData inputData =  arrayList.get(position);
-                itemName.setText(inputData.getItemName());
-                itemExecutionTime.setText(inputData.getItemExecutionTime());
+                InputData inputData =  items.get(position);
+                binding.itemName.setText(inputData.getItemName());
+                binding.itemExecutionTime.setText(inputData.getItemExecutionTime());
                 if (inputData.getProgressState()) {
-                    itemProgressBar.animate()
+                    binding.itemProgressBar.animate()
                             .setDuration(500)
                             .alpha(0)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    itemProgressBar.setVisibility(View.VISIBLE);
+                                    binding.itemProgressBar.setVisibility(View.VISIBLE);
                                 }
                             });
                 }
                 else {
-                    itemProgressBar.animate()
+                    binding.itemProgressBar.animate()
                             .setDuration(500)
                             .alpha(0)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    itemProgressBar.setVisibility(View.GONE);
+                                    binding.itemProgressBar.setVisibility(View.GONE);
                                 }
                             });
                 }
             }
         }
         public void editExecutionTime(int position, String time) {
-            arrayList.get(position).setItemExecutionTime(time);
+            items.get(position).setItemExecutionTime(time);
         }
  }
