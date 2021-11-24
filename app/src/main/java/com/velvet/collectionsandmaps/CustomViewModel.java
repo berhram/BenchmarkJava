@@ -1,7 +1,5 @@
 package com.velvet.collectionsandmaps;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class CustomViewModel extends ViewModel {
@@ -19,10 +17,6 @@ public class CustomViewModel extends ViewModel {
         else  {
             return 2;
         }
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     @Override

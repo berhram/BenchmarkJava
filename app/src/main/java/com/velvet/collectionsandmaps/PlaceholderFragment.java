@@ -4,17 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 
 import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
@@ -43,7 +38,8 @@ public class PlaceholderFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(CustomViewModel.class);
         String[] names;
-        if (viewModel.getIndex() == 0) {
+        arrayList = new ArrayList<>();
+        if (getArguments().getInt(INDEX) == 0) {
             names = getResources().getStringArray(R.array.list_items);
         }
         else {
@@ -68,9 +64,7 @@ public class PlaceholderFragment extends Fragment {
         GridLayoutManager lm = new GridLayoutManager(getContext(),viewModel.getNumberOfColumn());
         binding.recycler.setLayoutManager(lm);
         adapter = new CustomRecyclerViewAdapter();
-        for (int i = 0; i < arrayList.size(); i++) {
-            adapter.addInputData(arrayList.get(i));
-        }
+        adapter.setItems(arrayList);
         binding.recycler.setAdapter(adapter);
         binding.calculateButton.setOnClickListener(v -> {
                     AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 1, Integer.parseInt(binding.operationsInput.getText().toString()), adapter);

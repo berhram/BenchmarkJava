@@ -16,7 +16,7 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == CustomViewModel.class) {
-            return super.create(modelClass);
+            return (T) new CustomViewModel(index);
         }
         else {
             return null;

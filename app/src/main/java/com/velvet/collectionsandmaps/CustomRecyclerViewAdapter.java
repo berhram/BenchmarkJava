@@ -20,8 +20,10 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
 
         private final List<InputData> items = new ArrayList<>();
 
-        public void addInputData(InputData inputData) {
-            items.add(inputData);
+        public void setItems(List<InputData> inputItems) {
+            for (int i = 0; i < inputItems.size(); i++) {
+                items.add(inputItems.get(i));
+            }
         }
 
         @Override
@@ -41,7 +43,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         }
 
         public class ItemViewHolder extends RecyclerView.ViewHolder {
-            private ItemBenchmarksBinding binding;
+            final private ItemBenchmarksBinding binding;
 
             public ItemViewHolder(ItemBenchmarksBinding binding) {
                 super(binding.getRoot());
@@ -52,28 +54,8 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
                 InputData inputData =  items.get(position);
                 binding.itemName.setText(inputData.getItemName());
                 binding.itemExecutionTime.setText(inputData.getItemExecutionTime());
-                if (inputData.getProgressState()) {
-                    binding.itemProgressBar.animate()
-                            .setDuration(500)
-                            .alpha(0)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    binding.itemProgressBar.setVisibility(View.VISIBLE);
-                                }
-                            });
-                }
-                else {
-                    binding.itemProgressBar.animate()
-                            .setDuration(500)
-                            .alpha(0)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    binding.itemProgressBar.setVisibility(View.GONE);
-                                }
-                            });
-                }
+                float alpha = inputData.getProgressState() ? 1f : 0f;
+                binding.itemProgressBar.animate().setDuration(500).alpha(alpha);
             }
         }
         public void editExecutionTime(int position, String time) {
