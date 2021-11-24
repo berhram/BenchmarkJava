@@ -1,12 +1,7 @@
 package com.velvet.collectionsandmaps;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,5 +55,14 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         }
         public void editExecutionTime(int position, String time) {
             items.get(position).setItemExecutionTime(time);
+            notifyItemChanged(position);
+        }
+        public void executionStart(int position) {
+            items.get(position).setProgressState(true);
+            notifyItemChanged(position);
+        }
+        public void executionEnd(int position) {
+            items.get(position).setProgressState(false);
+            notifyItemChanged(position);
         }
  }

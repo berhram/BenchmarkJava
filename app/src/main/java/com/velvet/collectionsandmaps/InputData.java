@@ -17,10 +17,6 @@ public class InputData {
         return itemName;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
     public boolean getProgressState() {
         return progressState;
     }

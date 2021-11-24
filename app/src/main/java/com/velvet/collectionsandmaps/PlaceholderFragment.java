@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 
+import com.google.android.material.snackbar.Snackbar;
 import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
 
 import java.util.ArrayList;
@@ -22,8 +23,7 @@ public class PlaceholderFragment extends Fragment {
 
     private FragmentMainBinding binding;
     private CustomViewModel viewModel;
-    private ArrayList<InputData> arrayList;
-    private CustomRecyclerViewAdapter adapter;
+    final private CustomRecyclerViewAdapter adapter = new CustomRecyclerViewAdapter();;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -37,17 +37,11 @@ public class PlaceholderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(CustomViewModel.class);
-        String[] names;
-        arrayList = new ArrayList<>();
         if (getArguments().getInt(INDEX) == 0) {
-            names = getResources().getStringArray(R.array.list_items);
+            viewModel.setData(getResources().getStringArray(R.array.lists), getResources().getStringArray(R.array.list_actions), getString(R.string.notApplicable), getString(R.string.milliseconds));
         }
         else {
-            names = getResources().getStringArray(R.array.map_items);
-        }
-        for (int i = 0; i < names.length; i++) {
-        InputData tempInputData = new InputData(false, names[i], getString(R.string.notApplicable) + " " + getString(R.string.milliseconds));
-        arrayList.add(tempInputData);
+            viewModel.setData(getResources().getStringArray(R.array.maps), getResources().getStringArray(R.array.map_actions), getString(R.string.notApplicable), getString(R.string.milliseconds));
         }
     }
 
@@ -61,14 +55,18 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        GridLayoutManager lm = new GridLayoutManager(getContext(),viewModel.getNumberOfColumn());
-        binding.recycler.setLayoutManager(lm);
-        adapter = new CustomRecyclerViewAdapter();
-        adapter.setItems(arrayList);
+        binding.recycler.setLayoutManager(new GridLayoutManager(getContext(), viewModel.getNumberOfColumn()));
+        binding.recycler.addItemDecoration(new MarginItemDecoration(20));
+        adapter.setItems(viewModel.getData());
         binding.recycler.setAdapter(adapter);
         binding.calculateButton.setOnClickListener(v -> {
-                    AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 1, Integer.parseInt(binding.operationsInput.getText().toString()), adapter);
-                    addingToStartArrayList.execute();
+                    if (viewModel.validateInput(binding.operationsInput.getText().toString())) {
+                        AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 0, Integer.parseInt(binding.operationsInput.getText().toString()), adapter);
+                        addingToStartArrayList.execute();
+                    }
+                    else {
+                        Snackbar.make(view, "Correct input data!", Snackbar.LENGTH_LONG).show();
+                    }
                 }
         );
     }
