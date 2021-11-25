@@ -1,7 +1,5 @@
 package com.velvet.collectionsandmaps;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;

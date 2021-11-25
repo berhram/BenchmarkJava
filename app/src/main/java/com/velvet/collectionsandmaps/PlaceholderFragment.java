@@ -63,9 +63,10 @@ public class PlaceholderFragment extends Fragment {
                     if (viewModel.validateInput(binding.operationsInput.getText().toString())) {
                         AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 0, Integer.parseInt(binding.operationsInput.getText().toString()), adapter);
                         addingToStartArrayList.execute();
+                        binding.operationsInputLayout.setError(null);
                     }
                     else {
-                        Snackbar.make(view, "Correct input data!", Snackbar.LENGTH_LONG).show();
+                        binding.operationsInputLayout.setError("Input number is incorrect!");
                     }
                 }
         );

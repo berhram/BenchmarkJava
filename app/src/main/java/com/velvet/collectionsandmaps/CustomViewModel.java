@@ -1,5 +1,7 @@
 package com.velvet.collectionsandmaps;
 
+import android.content.res.Resources;
+
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
@@ -12,6 +14,12 @@ public class CustomViewModel extends ViewModel {
 
     public CustomViewModel(int index) {
         this.index = index;
+        if (index == 0) {
+            setData(Resources.getSystem().getStringArray(R.array.lists), Resources.getSystem().getStringArray(R.array.list_actions), Resources.getSystem().getString(R.string.notApplicable), Resources.getSystem().getString(R.string.milliseconds));
+        }
+        else {
+            setData(Resources.getSystem().getStringArray(R.array.maps), Resources.getSystem().getStringArray(R.array.map_actions), Resources.getSystem().getString(R.string.notApplicable), Resources.getSystem().getString(R.string.milliseconds));
+        }
     }
 
     public int getNumberOfColumn() {
@@ -31,7 +39,7 @@ public class CustomViewModel extends ViewModel {
         }
     }
 
-    public ArrayList<InputData> getData() {
+    public List getData() {
         return data;
     }
 

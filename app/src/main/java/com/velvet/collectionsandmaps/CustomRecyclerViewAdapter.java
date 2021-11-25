@@ -16,9 +16,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         private final List<InputData> items = new ArrayList<>();
 
         public void setItems(List<InputData> inputItems) {
-            for (int i = 0; i < inputItems.size(); i++) {
-                items.add(inputItems.get(i));
-            }
+            items.addAll(inputItems);
         }
 
         @Override
@@ -28,8 +26,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            ItemViewHolder viewHolder = holder;
-            viewHolder.bind(position);
+            holder.bind(holder);
         }
 
         @Override
@@ -45,12 +42,11 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
                 this.binding = binding;
             }
 
-            void bind(int position) {
-                InputData inputData =  items.get(position);
-                binding.itemName.setText(inputData.getItemName());
-                binding.itemExecutionTime.setText(inputData.getItemExecutionTime());
-                float alpha = inputData.getProgressState() ? 1f : 0f;
-                binding.itemProgressBar.animate().setDuration(500).alpha(alpha);
+            void bind(ItemViewHolder viewHolder) {
+                viewHolder.binding.itemName.setText(items.get(getLayoutPosition()).getItemName());
+                viewHolder.binding.itemExecutionTime.setText(items.get(getLayoutPosition()).getItemExecutionTime());
+                float alpha = items.get(getLayoutPosition()).getProgressState() ? 1f : 0f;
+                viewHolder.binding.itemProgressBar.animate().setDuration(500).alpha(alpha);
             }
         }
         public void editExecutionTime(int position, String time) {
