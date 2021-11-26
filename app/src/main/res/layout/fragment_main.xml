@@ -6,85 +6,57 @@
 
     <TextView
         android:id="@+id/operations_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/operations"
-        android:textSize="8pt"
-        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
-        app:layout_constraintEnd_toEndOf="@id/guideline4"
-        app:layout_constraintStart_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/recycler"
+        app:layout_constraintEnd_toStartOf="@+id/operations_input_layout"
+        app:layout_constraintStart_toStartOf="@id/recycler"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/operations_input_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/operations_input_layout"
         app:layout_constraintBottom_toTopOf="@id/recycler"
-        app:layout_constraintEnd_toEndOf="@id/guideline5"
-        app:layout_constraintStart_toStartOf="@id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/calculate_button"
+        app:layout_constraintStart_toEndOf="@+id/operations_label"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/operations_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/calculate_button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:text="@string/button"
         app:layout_constraintBottom_toTopOf="@id/recycler"
-        app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline5"
+        app:layout_constraintEnd_toEndOf="@id/recycler"
+        app:layout_constraintStart_toEndOf="@+id/operations_input_layout"
         app:layout_constraintTop_toTopOf="parent"
-        android:padding="10dp"/>
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.05" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.15" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,8 @@
     <string name="maps">Maps</string>
     <string name="milliseconds">ms</string>
     <string name="notApplicable">N/A</string>
+    <string name="benchmark_title">%s %s</string>
+    <string name="benchmark_time">%s %s</string>
     <string-array name="lists">
         <item>ArrayList</item>
         <item>LinkedList</item>

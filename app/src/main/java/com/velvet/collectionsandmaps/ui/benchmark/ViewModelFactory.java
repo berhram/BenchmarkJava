@@ -1,4 +1,4 @@
-package com.velvet.collectionsandmaps;
+package com.velvet.collectionsandmaps.ui.benchmark;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -17,9 +17,8 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == CustomViewModel.class) {
             return (T) new CustomViewModel(index);
-        }
-        else {
-            return null;
+        } else {
+            return super.create(modelClass);
         }
     }
 }

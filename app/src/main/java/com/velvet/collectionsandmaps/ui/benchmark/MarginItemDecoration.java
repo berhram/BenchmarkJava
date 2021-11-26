@@ -1,21 +1,23 @@
-package com.velvet.collectionsandmaps;
+package com.velvet.collectionsandmaps.ui.benchmark;
 
 import android.graphics.Rect;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MarginItemDecoration extends RecyclerView.ItemDecoration {
 
-    private int margin;
+    private final int margin;
 
     public MarginItemDecoration(int margin) {
         this.margin = margin;
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(
+            Rect outRect, @NonNull View view, RecyclerView parent, @NonNull RecyclerView.State state
+    ) {
         outRect.left = margin;
         outRect.right = margin;
         outRect.bottom = margin;
@@ -25,5 +27,5 @@ public class MarginItemDecoration extends RecyclerView.ItemDecoration {
             outRect.top = 0;
         }
     }
-
 }
+

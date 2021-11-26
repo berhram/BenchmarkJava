@@ -1,4 +1,4 @@
-package com.velvet.collectionsandmaps;
+package com.velvet.collectionsandmaps.ui.benchmark;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,23 +11,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-
-import com.google.android.material.snackbar.Snackbar;
 import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
 
-import java.util.ArrayList;
-
-public class PlaceholderFragment extends Fragment {
+public class BenchmarkFragment extends Fragment implements View.OnClickListener {
 
     private static final String INDEX = "fragment index";
 
     private FragmentMainBinding binding;
     private CustomViewModel viewModel;
-    final private CustomRecyclerViewAdapter adapter = new CustomRecyclerViewAdapter();;
+    private final BenchmarkAdapter adapter = new BenchmarkAdapter();
 
-    public static PlaceholderFragment newInstance(int index) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
-        Bundle bundle = new Bundle();
+    public static BenchmarkFragment newInstance(int index) {
+        final BenchmarkFragment fragment = new BenchmarkFragment();
+        final Bundle bundle = new Bundle();
         bundle.putInt(INDEX, index);
         fragment.setArguments(bundle);
         return fragment;
@@ -37,12 +33,8 @@ public class PlaceholderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(CustomViewModel.class);
-        if (getArguments().getInt(INDEX) == 0) {
-            viewModel.setData(getResources().getStringArray(R.array.lists), getResources().getStringArray(R.array.list_actions), getString(R.string.notApplicable), getString(R.string.milliseconds));
-        }
-        else {
-            viewModel.setData(getResources().getStringArray(R.array.maps), getResources().getStringArray(R.array.map_actions), getString(R.string.notApplicable), getString(R.string.milliseconds));
-        }
+        viewModel.setup();
+        viewModel.getItemsData().observe(this, adapter::setItems);
     }
 
     @Nullable
@@ -55,26 +47,22 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel.getValidationErrorData().observe(getViewLifecycleOwner(), errorId -> binding.operationsInput.setError(errorId == 0 ? null : getString(errorId)));
+
         binding.recycler.setLayoutManager(new GridLayoutManager(getContext(), viewModel.getNumberOfColumn()));
         binding.recycler.addItemDecoration(new MarginItemDecoration(20));
-        adapter.setItems(viewModel.getData());
         binding.recycler.setAdapter(adapter);
-        binding.calculateButton.setOnClickListener(v -> {
-                    if (viewModel.validateInput(binding.operationsInput.getText().toString())) {
-                        AddingToStart addingToStartArrayList = new AddingToStart(new ArrayList(), 0, Integer.parseInt(binding.operationsInput.getText().toString()), adapter);
-                        addingToStartArrayList.execute();
-                        binding.operationsInputLayout.setError(null);
-                    }
-                    else {
-                        binding.operationsInputLayout.setError("Input number is incorrect!");
-                    }
-                }
-        );
+        binding.calculateButton.setOnClickListener(this);
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         binding = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onClick(View view) {
+        viewModel.tryToMeasure(binding.operationsInput.getText().toString());
     }
 }

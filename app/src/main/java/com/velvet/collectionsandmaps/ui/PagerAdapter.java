@@ -1,22 +1,23 @@
-package com.velvet.collectionsandmaps;
+package com.velvet.collectionsandmaps.ui;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.velvet.collectionsandmaps.ui.benchmark.BenchmarkFragment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
+public class PagerAdapter extends FragmentStateAdapter {
 
-    public ViewPagerFragmentAdapter(FragmentActivity fa) {
+    public PagerAdapter(FragmentActivity fa) {
         super(fa);
     }
 
     @NotNull
     @Override
     public Fragment createFragment(int position) {
-        return PlaceholderFragment.newInstance(position);
+        return BenchmarkFragment.newInstance(position);
     }
 
     @Override
