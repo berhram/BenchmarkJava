@@ -126,8 +126,8 @@ public class CustomViewModel extends ViewModel {
                     Future<Integer> result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.add(0,null);
                             }
@@ -141,8 +141,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.add(temporaryList.size()/2,null);
                             }
@@ -156,8 +156,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.add(temporaryList.size(),null);
                             }
@@ -171,8 +171,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.indexOf(null);
                             }
@@ -186,8 +186,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.remove(0);
                             }
@@ -201,8 +201,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.remove(temporaryList.size()/2);
                             }
@@ -216,8 +216,8 @@ public class CustomViewModel extends ViewModel {
                     result = executor.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
+                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
                             double startTime = System.nanoTime();
-                            List temporaryList = lists.get(finalI);
                             for (int j = 0; j < items; j++) {
                                 temporaryList.remove(temporaryList.size()-1);
                             }
