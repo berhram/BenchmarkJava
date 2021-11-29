@@ -1,5 +1,8 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import android.os.Process;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,14 +10,29 @@ import androidx.lifecycle.ViewModel;
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class CustomViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final int index;
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(27,
+            27,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingDeque<>(),
+            new PriorityThreadFactory(Process.THREAD_PRIORITY_BACKGROUND));
 
     public CustomViewModel(int index) {
         this.index = index;
@@ -38,33 +56,45 @@ public class CustomViewModel extends ViewModel {
 
     private List<BenchmarkData> createList() {
         final List<BenchmarkData> list = new ArrayList<>();
-        list.add(new BenchmarkData(R.string.array_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
+        if (index == 0) {
+            list.add(new BenchmarkData(R.string.array_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_middle, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.add_to_end, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.search, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_start, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_middle, R.string.notApplicable, R.string.milliseconds));
 
-        list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.array_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.linked_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
+        }
+        else {
+            list.add(new BenchmarkData(R.string.hash_map, R.string.add_to, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.tree_map, R.string.add_to, R.string.notApplicable, R.string.milliseconds));
+
+            list.add(new BenchmarkData(R.string.hash_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.tree_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
+
+            list.add(new BenchmarkData(R.string.hash_map, R.string.remove_from, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.tree_map, R.string.remove_from, R.string.notApplicable, R.string.milliseconds));
+        }
         return list;
     }
 
@@ -81,12 +111,137 @@ public class CustomViewModel extends ViewModel {
             return;
         }
 
-        // TODO: launch or stop measurements. you can use threadPool or list of async tasks
-
         if (measurementRunning()) {
             stopMeasurements();
         } else {
+            if (index==0) {
+                List<Future<Integer>> resultList = new ArrayList<>();
+                List<List> lists = new ArrayList<>();
+                lists.add(new ArrayList<>(items));
+                lists.add(new LinkedList<>());
+                lists.add(new CopyOnWriteArrayList<>());
+                for (int i = 0; i < lists.size(); i++) {
+                    final int finalI = i;
+                    //adding to beginning
+                    Future<Integer> result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.add(0,null);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Adding to middle
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.add(temporaryList.size()/2,null);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Adding to end
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.add(temporaryList.size(),null);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Search
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.indexOf(null);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Remove at beginning
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.remove(0);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Remove at middle
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.remove(temporaryList.size()/2);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                    //Remove at end
+                    result = executor.submit(new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            double startTime = System.nanoTime();
+                            List temporaryList = lists.get(finalI);
+                            for (int j = 0; j < items; j++) {
+                                temporaryList.remove(temporaryList.size()-1);
+                            }
+                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
+                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
+                            return Integer.parseInt(Double.toString(endTime));
+                        }
+                    });
+                    resultList.add(result);
+                }
+                for(Future<Integer> future : resultList)
+                {
+                    try
+                    {
+                        Log.d("Future", future.get() + " status:" + future.isDone());
+                    }
+                    catch (InterruptedException | ExecutionException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
 
+            }
         }
     }
 
@@ -95,7 +250,7 @@ public class CustomViewModel extends ViewModel {
     }
 
     private void stopMeasurements() {
-
+        executor.shutdown();
     }
 
     @Override
@@ -105,4 +260,5 @@ public class CustomViewModel extends ViewModel {
         }
         super.onCleared();
     }
+
 }
