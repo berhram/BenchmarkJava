@@ -1,6 +1,5 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
-import android.os.Process;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -10,10 +9,11 @@ import androidx.lifecycle.ViewModel;
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +32,7 @@ public class CustomViewModel extends ViewModel {
             60L,
             TimeUnit.SECONDS,
             new LinkedBlockingDeque<>(),
-            new PriorityThreadFactory(Process.THREAD_PRIORITY_BACKGROUND));
+            r -> new Thread(r));
 
     public CustomViewModel(int index) {
         this.index = index;
@@ -115,134 +115,264 @@ public class CustomViewModel extends ViewModel {
             stopMeasurements();
         } else {
             if (index==0) {
-                List<Future<Integer>> resultList = new ArrayList<>();
-                List<List> lists = new ArrayList<>();
-                lists.add(new ArrayList<>(items));
-                lists.add(new LinkedList<>());
-                lists.add(new CopyOnWriteArrayList<>());
-                for (int i = 0; i < lists.size(); i++) {
-                    final int finalI = i;
-                    //adding to beginning
-                    Future<Integer> result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.add(0,null);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Adding to middle
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.add(temporaryList.size()/2,null);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Adding to end
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.add(temporaryList.size(),null);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Search
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.indexOf(null);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Remove at beginning
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.remove(0);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Remove at middle
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.remove(temporaryList.size()/2);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                    //Remove at end
-                    result = executor.submit(new Callable<Integer>() {
-                        @Override
-                        public Integer call() throws Exception {
-                            List temporaryList = ListPopulator.populate(lists.get(finalI), items);
-                            double startTime = System.nanoTime();
-                            for (int j = 0; j < items; j++) {
-                                temporaryList.remove(temporaryList.size()-1);
-                            }
-                            double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                            DecimalFormat doubleFormatter  = new DecimalFormat("0.000000");
-                            return Integer.parseInt(Double.toString(endTime));
-                        }
-                    });
-                    resultList.add(result);
-                }
-                for(Future<Integer> future : resultList)
-                {
-                    try
-                    {
-                        Log.d("Future", future.get() + " status:" + future.isDone());
+                List<BenchmarkData> list = new ArrayList<>();
+                List<Future<Integer>> resultsList = new ArrayList<>();
+                //Add to start in ArrayList
+                Callable<Integer> addToStartInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        arrayList.add(0, "Denver");
                     }
-                    catch (InterruptedException | ExecutionException e)
-                    {
-                        e.printStackTrace();
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToStartInAL));
+                //Add to start in LinkedList
+                Callable<Integer> addToStartInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = new LinkedList<>();
+                    for (int i = 0; i < items; i++) {
+                        linkedList.add(0, "Denver");
                     }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToStartInLL));
+                //Add to start in CopyOnWriteArrayList
+                Callable<Integer> addToStartInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.add(0, "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToStartInCOW));
+
+                //Add to middle in ArrayList
+                Callable<Integer> addToMiddleInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        arrayList.add(arrayList.size()/2, "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToMiddleInAL));
+                //Add to middle in LinkedList
+                Callable<Integer> addToMiddleInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = new LinkedList<>();
+                    for (int i = 0; i < items; i++) {
+                        linkedList.add(linkedList.size()/2, "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToMiddleInLL));
+                //Add to middle in CopyOnWriteArrayList
+                Callable<Integer> addToMiddleInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.add(copyOnWriteArrayList.size()/2, "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToMiddleInCOW));
+
+                //Add to end in ArrayList
+                Callable<Integer> addToEndInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        arrayList.add(arrayList.size(), "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToEndInAL));
+                //Add to end in LinkedList
+                Callable<Integer> addToEndInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = new LinkedList<>();
+                    for (int i = 0; i < items; i++) {
+                        linkedList.add(linkedList.size(), "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToEndInLL));
+                //Add to end in CopyOnWriteArrayList
+                Callable<Integer> addToEndInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.add(copyOnWriteArrayList.size(), "Denver");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(addToEndInCOW));
+
+                //Search in ArrayList
+                Callable<Integer> searchInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = (ArrayList<String>) populateList(new ArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        arrayList.indexOf("Detroit");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(searchInAL));
+                //Search in LinkedList
+                Callable<Integer> searchInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = (LinkedList<String>) populateList(new LinkedList<>(),items);
+                    for (int i = 0; i < items; i++) {
+                        linkedList.indexOf("Detroit");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(searchInLL));
+                //Search in CopyOnWriteArrayList
+                Callable<Integer> searchInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = (CopyOnWriteArrayList<String>) populateList(new CopyOnWriteArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.indexOf("Detroit");
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(searchInCOW));
+
+                //Remove from start in ArrayList
+                Callable<Integer> removeFromStartInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = (ArrayList<String>) populateList(new ArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        arrayList.remove(0);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromStartInAL));
+                //Remove from start in LinkedList
+                Callable<Integer> removeFromStartInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = (LinkedList<String>) populateList(new LinkedList<>(),items);
+                    for (int i = 0; i < items; i++) {
+                        linkedList.remove(0);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromStartInLL));
+                //Remove from start in CopyOnWriteArrayList
+                Callable<Integer> removeFromStartInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = (CopyOnWriteArrayList<String>) populateList(new CopyOnWriteArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.remove(0);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromStartInCOW));
+
+                //Remove from middle in ArrayList
+                Callable<Integer> removeFromMiddleInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = (ArrayList<String>) populateList(new ArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        arrayList.remove(arrayList.size()/2);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromMiddleInAL));
+                //Remove from middle in LinkedList
+                Callable<Integer> removeFromMiddleInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = (LinkedList<String>) populateList(new LinkedList<>(),items);
+                    for (int i = 0; i < items; i++) {
+                        linkedList.remove(linkedList.size()/2);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromMiddleInLL));
+                //Remove from middle in CopyOnWriteArrayList
+                Callable<Integer> removeFromMiddleInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = (CopyOnWriteArrayList<String>) populateList(new CopyOnWriteArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.remove(copyOnWriteArrayList.size()/2);
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromMiddleInCOW));
+
+                //Remove from end in ArrayList
+                Callable<Integer> removeFromEndInAL = () -> {
+                    double startTime = System.nanoTime();
+                    ArrayList<String> arrayList = (ArrayList<String>) populateList(new ArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        arrayList.remove(arrayList.size());
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromEndInAL));
+                //Remove from end in LinkedList
+                Callable<Integer> removeFromEndInLL = () -> {
+                    double startTime = System.nanoTime();
+                    LinkedList<String> linkedList = (LinkedList<String>) populateList(new LinkedList<>(),items);
+                    for (int i = 0; i < items; i++) {
+                        linkedList.remove(linkedList.size());
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromEndInLL));
+                //Remove from end in CopyOnWriteArrayList
+                Callable<Integer> removeFromEndInCOW = () -> {
+                    double startTime = System.nanoTime();
+                    CopyOnWriteArrayList<String> copyOnWriteArrayList = (CopyOnWriteArrayList<String>) populateList(new CopyOnWriteArrayList<>(), items);
+                    for (int i = 0; i < items; i++) {
+                        copyOnWriteArrayList.remove(copyOnWriteArrayList.size());
+                    }
+                    double endTime = (System.nanoTime()-startTime)/1_000_000;
+                    return (int) endTime;
+                };
+                resultsList.add(executor.submit(removeFromEndInCOW));
+                try {
+                    for (Future<Integer> f : resultsList) {
+                        f.get();
+                        //under construction
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e("Error","Exception", e);
                 }
             } else {
 
             }
         }
+    }
+
+    private List populateList(List list, int size) {
+        Collections.nCopies(size-1, "Denver");
+        Random random = new Random();
+        list.add(random.nextInt(size), "Detroit");
+        return list;
     }
 
     private boolean measurementRunning() {
