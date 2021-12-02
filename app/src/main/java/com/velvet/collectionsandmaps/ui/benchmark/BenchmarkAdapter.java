@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.velvet.collectionsandmaps.R;
@@ -19,11 +20,8 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
     private final List<BenchmarkData> items = new ArrayList<>();
 
     public void setItems(List<BenchmarkData> inputItems) {
-        items.clear();
-        items.addAll(inputItems);
-        notifyDataSetChanged();
-
-        // TODO: add diffutil or use ListAdapter for recyclerView
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new BenchmarkDiffUtilCallback(items, inputItems));
+        result.dispatchUpdatesTo(this);
     }
 
     @NonNull
