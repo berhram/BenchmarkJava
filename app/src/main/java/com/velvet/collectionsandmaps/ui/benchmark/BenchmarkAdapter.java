@@ -59,7 +59,7 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
             } else {
                 time = ctx.getString(item.defaultValue);
             }
-            binding.itemExecutionTime.setText(ctx.getString(R.string.benchmark_time, time));
+            binding.itemExecutionTime.setText(ctx.getString(R.string.benchmark_time, time, ctx.getString(item.measureUnits)));
 
             final float alpha = item.isInProgress() ? 1F : 0F;
             binding.itemProgressBar.animate().setDuration(500).alpha(alpha);

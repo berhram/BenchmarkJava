@@ -12,7 +12,7 @@
     <string name="milliseconds">ms</string>
     <string name="notApplicable">N/A</string>
     <string name="benchmark_title">%s %s</string>
-    <string name="benchmark_time">%s</string>
+    <string name="benchmark_time">%s %s</string>
     <string name="array_list">ArrayList</string>
     <string name="linked_list">LinkedList</string>
     <string name="copy_on_write_list">CopyOnWriteArrayList</string>

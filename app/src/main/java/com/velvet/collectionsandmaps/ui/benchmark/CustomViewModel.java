@@ -115,15 +115,17 @@ public class CustomViewModel extends ViewModel {
             stopMeasurements();
         } else {
             List<BenchmarkData> measuredItems = createList();
-            for (BenchmarkData item:
-                 measuredItems) {
-                item.setProgressState(true);
-                executor.submit(() -> {
-                    item.setTime(measureTime(item, items));
-                });
-                item.setProgressState(false);
-                itemsData.setValue(measuredItems);
-            }
+            executor.execute(() -> {
+                for (BenchmarkData item :
+                        measuredItems) {
+                    item.setProgressState(true);
+                    executor.submit(() -> {
+                        item.setTime(measureTime(item, items));
+                    });
+                    item.setProgressState(false);
+                    itemsData.postValue(measuredItems);
+                }
+            });
         }
     }
 
@@ -178,6 +180,7 @@ public class CustomViewModel extends ViewModel {
                     measuredList.remove(measuredList.size());
                 }
             }
+            Log.d("Measurements details", "Measured list is " + measuredList.toString());
         }
         else {
             Map<String, String> measuredMap;
@@ -204,8 +207,10 @@ public class CustomViewModel extends ViewModel {
                     measuredMap.remove("Key " + i);
                 }
             }
+            Log.d("Measurements details", "Measured map is " + measuredMap.toString() );
         }
         double endTime = (System.nanoTime() - startTime)/1_000_000;
+        Log.d("Measurements details", endTime + "");
         return endTime;
     }
 
