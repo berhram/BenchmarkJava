@@ -20,9 +20,10 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
     private final List<BenchmarkData> items = new ArrayList<>();
 
     public void setItems(List<BenchmarkData> inputItems) {
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new BenchmarkDiffUtilCallback(items, inputItems));
         items.clear();
         items.addAll(inputItems);
-        DiffUtil.calculateDiff(new BenchmarkDiffUtilCallback(items, inputItems)).dispatchUpdatesTo(this);
+        result.dispatchUpdatesTo(this);
     }
 
     @NonNull
