@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.DiffUtil;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
@@ -18,10 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -90,14 +86,14 @@ public class CustomViewModel extends ViewModel {
             list.add(new BenchmarkData(R.string.copy_on_write_list, R.string.remove_from_end, R.string.notApplicable, R.string.milliseconds));
         }
         else {
-            list.add(new BenchmarkData(R.string.hash_map, R.string.add_to, R.string.notApplicable, R.string.milliseconds));
-            list.add(new BenchmarkData(R.string.tree_map, R.string.add_to, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.tree_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds));
 
             list.add(new BenchmarkData(R.string.hash_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
             list.add(new BenchmarkData(R.string.tree_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
 
-            list.add(new BenchmarkData(R.string.hash_map, R.string.remove_from, R.string.notApplicable, R.string.milliseconds));
-            list.add(new BenchmarkData(R.string.tree_map, R.string.remove_from, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.hash_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds));
+            list.add(new BenchmarkData(R.string.tree_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds));
         }
         return list;
     }
@@ -118,158 +114,99 @@ public class CustomViewModel extends ViewModel {
         if (measurementRunning()) {
             stopMeasurements();
         } else {
-            List<BenchmarkData> itemsList = createList();
-            for (int i = 0; i < itemsList.size(); i++) {
-                itemsList.get(i).setProgressState(true);
+            List<BenchmarkData> measuredItems = createList();
+            for (BenchmarkData item:
+                 measuredItems) {
+                item.setProgressState(true);
+                executor.submit(() -> {
+                    item.setTime(measureTime(item, items));
+                });
+                item.setProgressState(false);
+                itemsData.setValue(measuredItems);
             }
-            List<Future<Double>> resultsList = new ArrayList<>();
-
-            if (index==0) {
-                List<List<String>> listOfLists = new ArrayList<>();
-                listOfLists.add(new ArrayList<>());
-                listOfLists.add(new LinkedList<>());
-                listOfLists.add(new CopyOnWriteArrayList<>());
-                for (int i = 0; i < listOfLists.size(); i++) {
-                    final int finalI = i;
-                    Callable<Double> addToStart = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = listOfLists.get(finalI);
-                        addToStartInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(addToStart));
-
-                    Callable<Double> addToMiddle = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = listOfLists.get(finalI);
-                        addToMiddleInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(addToMiddle));
-
-                    Callable<Double> addToEnd = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = listOfLists.get(finalI);
-                        addToEndInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(addToEnd));
-
-                    Callable<Double> searchIn = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = populateList(listOfLists.get(finalI), items);
-                        searchInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(searchIn));
-
-                    Callable<Double> removeFromStart = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = populateList(listOfLists.get(finalI), items);
-                        removeFromStartInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(removeFromStart));
-
-                    Callable<Double> removeFromMiddle = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = populateList(listOfLists.get(finalI), items);
-                        removeFromMiddleInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(removeFromMiddle));
-
-                    Callable<Double> removeFromEnd = () -> {
-                        double startTime = System.nanoTime();
-                        List tempList = populateList(listOfLists.get(finalI), items);
-                        removeFromEndInList(tempList,items);
-                        double endTime = (System.nanoTime()-startTime)/1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(removeFromEnd));
-                }
-            }
-            else {
-                ArrayList<Map<String, String>> listOfMaps = new ArrayList<>();
-                listOfMaps.add(new HashMap<>());
-                listOfMaps.add(new TreeMap<>());
-                for (int i = 0; i < listOfMaps.size(); i++) {
-                    final int finalI = i;
-                    Callable<Double> addTo = () -> {
-                        double startTime = System.nanoTime();
-                        Map tempMap = listOfMaps.get(finalI);
-                        addToMap(tempMap, items);
-                        double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(addTo));
-
-                    Callable<Double> searchIn = () -> {
-                        Map tempMap = populateMap(listOfMaps.get(finalI), items);
-                        double startTime = System.nanoTime();
-                        searchInMap(tempMap, items);
-                        double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(searchIn));
-
-                    Callable<Double> removeFrom  = () -> {
-                        Map tempMap = populateMap(listOfMaps.get(finalI), items);
-                        double startTime = System.nanoTime();
-                        removeFromMap(tempMap, items);
-                        double endTime = (System.nanoTime() - startTime) / 1_000_000;
-                        return endTime;
-                    };
-                    resultsList.add(executor.submit(removeFrom));
-                }
-            }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        while (!allItemsIsMeasured(itemsList)) {
-                            for (Future<Double> f : resultsList) {
-                                if ((f.get() != null) && (!itemsList.get(resultsList.indexOf(f)).isMeasured())) {
-                                    itemsList.get(resultsList.indexOf(f)).setTime(f.get());
-                                    itemsList.get(resultsList.indexOf(f)).setProgressState(false);
-                                    itemsData.setValue(itemsList);
-                                }
-                            }
-                        }
-                    }
-                    catch(ExecutionException | InterruptedException e){
-                        Log.e("Error", "Exception", e);
-                    }
-                }
-            }).run();
         }
     }
 
-    private boolean allItemsIsMeasured(List<BenchmarkData> list) {
-        for (int i = 0; i < list.size(); i++) {
-            if (!list.get(i).isMeasured()) {
-                return false;
+    private double measureTime(BenchmarkData item, int iterations) {
+        double startTime;
+        if (index == 0) {
+            List<String> measuredList;
+            if (item.collectionName == R.string.array_list) {
+                measuredList = new ArrayList<>();
+            } else if (item.collectionName == R.string.linked_list) {
+                measuredList = new LinkedList<>();
+            } else {
+                measuredList = new CopyOnWriteArrayList<>();
+            }
+            if (item.operation == R.string.add_to_start) {
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.add(0, "Denver");
+                }
+            } else if (item.operation == R.string.add_to_middle) {
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.add(measuredList.size()/2, "Denver");
+                }
+            } else if (item.operation == R.string.add_to_end) {
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.add(measuredList.size(), "Denver");
+                }
+            } else if (item.operation == R.string.search) {
+                populateList(measuredList, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.indexOf("Detroit");
+                }
+            } else if (item.operation == R.string.remove_from_start) {
+                populateList(measuredList, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.remove(0);
+                }
+            } else if (item.operation == R.string.remove_from_middle) {
+                populateList(measuredList, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.remove(measuredList.size()/2);
+                }
+            } else {
+                populateList(measuredList, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredList.remove(measuredList.size());
+                }
             }
         }
-        return true;
-    }
-
-    private void removeFromMap(Map map, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            map.remove("Key " + i);
+        else {
+            Map<String, String> measuredMap;
+            if (item.collectionName == R.string.hash_map) {
+                measuredMap= new HashMap<>();
+            } else {
+                measuredMap= new TreeMap<>();
+            }
+            if (item.operation == R.string.add_to_map) {
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredMap.put("Key " + i, "Value " + i);
+                }
+            } else if (item.operation == R.string.search) {
+                populateMap(measuredMap, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredMap.get("Key " + i);
+                }
+            } else {
+                populateMap(measuredMap, iterations);
+                startTime = System.nanoTime();
+                for (int i = 0; i < iterations; i++) {
+                    measuredMap.remove("Key " + i);
+                }
+            }
         }
-    }
-
-    private void searchInMap(Map map, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            map.get("Key " + i);
-        }
+        double endTime = (System.nanoTime() - startTime)/1_000_000;
+        return endTime;
     }
 
     private Map populateMap(Map<String, String> map, int size) {
@@ -279,59 +216,12 @@ public class CustomViewModel extends ViewModel {
         return map;
     }
 
-    private void addToMap(Map<String, String> map, int size) {
-        for (int i = 0; i < size; i++) {
-            map.put("Key " + i, "Value" + i);
-        }
-    }
 
-    private List populateList(List list, int size) {
+    private List populateList(List<String> list, int size) {
         Collections.nCopies(size-1, "Denver");
         Random random = new Random();
         list.add(random.nextInt(size), "Detroit");
         return list;
-    }
-
-    private void addToStartInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.add(0, "Denver");
-        }
-    }
-
-    private void addToMiddleInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.add(list.size()/2, "Denver");
-        }
-    }
-
-    private void addToEndInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.add(list.size(), "Denver");
-        }
-    }
-
-    private void searchInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.indexOf("Detroit");
-        }
-    }
-
-    private void removeFromStartInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.remove(0);
-        }
-    }
-
-    private void removeFromMiddleInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.remove(list.size()/2);
-        }
-    }
-
-    private void removeFromEndInList(List list, int iterations) {
-        for (int i = 0; i < iterations; i++) {
-            list.remove(list.size());
-        }
     }
 
     private boolean measurementRunning() {
@@ -349,5 +239,4 @@ public class CustomViewModel extends ViewModel {
         }
         super.onCleared();
     }
-
 }
