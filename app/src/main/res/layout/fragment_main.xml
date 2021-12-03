@@ -39,7 +39,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="@string/button"
         app:layout_constraintBottom_toTopOf="@id/recycler"
         app:layout_constraintEnd_toEndOf="@id/recycler"
         app:layout_constraintStart_toEndOf="@+id/operations_input_layout"

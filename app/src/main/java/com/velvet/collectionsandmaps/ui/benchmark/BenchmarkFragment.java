@@ -48,7 +48,7 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel.getValidationErrorData().observe(getViewLifecycleOwner(), errorId -> binding.operationsInput.setError(errorId == 0 ? null : getString(errorId)));
-
+        viewModel.getButtonText().observe(getViewLifecycleOwner(), binding.calculateButton::setText);
         binding.recycler.setLayoutManager(new GridLayoutManager(getContext(), viewModel.getNumberOfColumn()));
         binding.recycler.addItemDecoration(new MarginItemDecoration(20));
         binding.recycler.setAdapter(adapter);

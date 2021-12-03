@@ -26,6 +26,7 @@ public class CustomViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
     private final int index;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
             28,
@@ -36,6 +37,10 @@ public class CustomViewModel extends ViewModel {
 
     public CustomViewModel(int index) {
         this.index = index;
+    }
+
+    public LiveData<Integer> getButtonText() {
+        return buttonText;
     }
 
     public LiveData<Integer> getValidationErrorData() {
@@ -100,6 +105,7 @@ public class CustomViewModel extends ViewModel {
 
     public void setup() {
         itemsData.setValue(createList());
+        buttonText.setValue(R.string.button_start);
     }
 
     public void tryToMeasure(String itemsStr) {
@@ -107,13 +113,15 @@ public class CustomViewModel extends ViewModel {
         try {
             items = Integer.parseInt(itemsStr.trim());
         } catch (NumberFormatException e) {
-            validationErrorData.setValue(R.string.invalid_number);
+            validationErrorData.postValue(R.string.invalid_number);
             return;
         }
 
         if (measurementRunning()) {
             stopMeasurements();
+            buttonText.postValue(R.string.button_start);
         } else {
+            buttonText.postValue(R.string.button_stop);
             List<BenchmarkData> measuredItems = createList();
             executor.execute(() -> {
                 for (BenchmarkData item :
@@ -121,11 +129,12 @@ public class CustomViewModel extends ViewModel {
                     item.setProgressState(true);
                     executor.submit(() -> {
                         item.setTime(measureTime(item, items));
+                        item.setProgressState(false);
+                        itemsData.postValue(measuredItems);
                     });
-                    item.setProgressState(false);
-                    itemsData.postValue(measuredItems);
                 }
             });
+            buttonText.postValue(R.string.button_start);
         }
     }
 
@@ -134,12 +143,14 @@ public class CustomViewModel extends ViewModel {
         if (index == 0) {
             List<String> measuredList;
             if (item.collectionName == R.string.array_list) {
-                measuredList = new ArrayList<>();
+                measuredList = new ArrayList<>(Collections.nCopies(iterations-1, "Denver"));
             } else if (item.collectionName == R.string.linked_list) {
-                measuredList = new LinkedList<>();
+                measuredList = new LinkedList<>(Collections.nCopies(iterations-1, "Denver"));
             } else {
-                measuredList = new CopyOnWriteArrayList<>();
+                measuredList = new CopyOnWriteArrayList<>(Collections.nCopies(iterations-1, "Denver"));
             }
+            Random random = new Random();
+            measuredList.add(random.nextInt(iterations), "Detroit");
             if (item.operation == R.string.add_to_start) {
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
@@ -156,31 +167,26 @@ public class CustomViewModel extends ViewModel {
                     measuredList.add(measuredList.size(), "Denver");
                 }
             } else if (item.operation == R.string.search) {
-                populateList(measuredList, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredList.indexOf("Detroit");
                 }
             } else if (item.operation == R.string.remove_from_start) {
-                populateList(measuredList, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredList.remove(0);
                 }
             } else if (item.operation == R.string.remove_from_middle) {
-                populateList(measuredList, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredList.remove(measuredList.size()/2);
                 }
             } else {
-                populateList(measuredList, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
-                    measuredList.remove(measuredList.size());
+                    measuredList.remove(measuredList.size()-1);
                 }
             }
-            Log.d("Measurements details", "Measured list is " + measuredList.toString());
         }
         else {
             Map<String, String> measuredMap;
@@ -189,44 +195,28 @@ public class CustomViewModel extends ViewModel {
             } else {
                 measuredMap= new TreeMap<>();
             }
+            for (int i = 0; i < iterations; i++) {
+                measuredMap.put("Key " + i, "Value" + i);
+            }
             if (item.operation == R.string.add_to_map) {
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredMap.put("Key " + i, "Value " + i);
                 }
             } else if (item.operation == R.string.search) {
-                populateMap(measuredMap, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredMap.get("Key " + i);
                 }
             } else {
-                populateMap(measuredMap, iterations);
                 startTime = System.nanoTime();
                 for (int i = 0; i < iterations; i++) {
                     measuredMap.remove("Key " + i);
                 }
             }
-            Log.d("Measurements details", "Measured map is " + measuredMap.toString() );
         }
         double endTime = (System.nanoTime() - startTime)/1_000_000;
-        Log.d("Measurements details", endTime + "");
         return endTime;
-    }
-
-    private Map populateMap(Map<String, String> map, int size) {
-        for (int i = 0; i < size; i++) {
-            map.put("Key " + i, "Value" + i);
-        }
-        return map;
-    }
-
-
-    private List populateList(List<String> list, int size) {
-        Collections.nCopies(size-1, "Denver");
-        Random random = new Random();
-        list.add(random.nextInt(size), "Detroit");
-        return list;
     }
 
     private boolean measurementRunning() {

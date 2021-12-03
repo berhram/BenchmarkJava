@@ -6,7 +6,8 @@
     </string-array>
     <string name="operations">Operations</string>
     <string name="threads">Threads</string>
-    <string name="button">Calculate</string>
+    <string name="button_start">Start</string>
+    <string name="button_stop">Stop</string>
     <string name="collections">Collections</string>
     <string name="maps">Maps</string>
     <string name="milliseconds">ms</string>
