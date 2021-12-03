@@ -113,15 +113,15 @@ public class CustomViewModel extends ViewModel {
         try {
             items = Integer.parseInt(itemsStr.trim());
         } catch (NumberFormatException e) {
-            validationErrorData.postValue(R.string.invalid_number);
+            validationErrorData.setValue(R.string.invalid_number);
             return;
         }
 
         if (measurementRunning()) {
             stopMeasurements();
-            buttonText.postValue(R.string.button_start);
+            buttonText.setValue(R.string.button_start);
         } else {
-            buttonText.postValue(R.string.button_stop);
+            buttonText.setValue(R.string.button_stop);
             List<BenchmarkData> measuredItems = createList();
             executor.execute(() -> {
                 for (BenchmarkData item :
@@ -134,7 +134,7 @@ public class CustomViewModel extends ViewModel {
                     });
                 }
             });
-            buttonText.postValue(R.string.button_start);
+            buttonText.setValue(R.string.button_start);
         }
     }
 
