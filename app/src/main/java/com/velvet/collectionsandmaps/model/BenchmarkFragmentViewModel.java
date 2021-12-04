@@ -8,12 +8,13 @@ import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 import com.velvet.collectionsandmaps.model.BenchmarkViewModelMethods;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class CustomViewModel extends ViewModel {
+public class BenchmarkFragmentViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
@@ -26,7 +27,7 @@ public class CustomViewModel extends ViewModel {
             new LinkedBlockingDeque<>(),
             r -> new Thread(r));
 
-    public CustomViewModel(BenchmarkViewModelMethods methods) {
+    public BenchmarkFragmentViewModel(BenchmarkViewModelMethods methods) {
         this.methods = methods;
     }
 
@@ -71,7 +72,9 @@ public class CustomViewModel extends ViewModel {
             for (BenchmarkData item : measuredItems) {
                 executor.submit(() -> {
                     item.setTime(methods.measureTime(item, items));
-                    itemsData.postValue(measuredItems);
+                    List tempList = itemsData.getValue();
+                    tempList.set(measuredItems.indexOf(item), item);
+                    itemsData.postValue(tempList);
                 });
             }
         }
