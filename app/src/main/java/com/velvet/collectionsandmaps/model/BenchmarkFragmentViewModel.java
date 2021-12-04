@@ -75,13 +75,16 @@ public class BenchmarkFragmentViewModel extends ViewModel {
                     List tempList = itemsData.getValue();
                     tempList.set(measuredItems.indexOf(item), item);
                     itemsData.postValue(tempList);
+                    if (executor.getCompletedTaskCount()%(measuredItems.size()-1)==0) {
+                        buttonText.postValue(R.string.button_start);
+                    }
                 });
             }
         }
     }
 
     private boolean measurementRunning() {
-        return !executor.getQueue().isEmpty();
+        return !(executor.getActiveCount()==0);
     }
 
     private void stopMeasurements() {
