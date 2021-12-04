@@ -1,5 +1,8 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,7 +10,6 @@ import androidx.lifecycle.ViewModel;
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
@@ -66,19 +68,17 @@ public class CustomViewModel extends ViewModel {
             buttonText.setValue(R.string.button_start);
         } else {
             buttonText.setValue(R.string.button_stop);
-            List<BenchmarkData> measuredItems = methods.createList();
+            itemsData.setValue(methods.createList(true));
+
+            final List<BenchmarkData> measuredItems = methods.createList(false);
             executor.execute(() -> {
-                for (BenchmarkData item :
-                        measuredItems) {
-                    item.setProgressState(true);
+                for (BenchmarkData item : measuredItems) {
                     executor.submit(() -> {
                         item.setTime(methods.measureTime(item, items));
-                        item.setProgressState(false);
                         itemsData.postValue(measuredItems);
                     });
                 }
             });
-            buttonText.setValue(R.string.button_start);
         }
     }
 
