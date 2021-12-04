@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel;
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +48,7 @@ public class CustomViewModel extends ViewModel {
     }
 
     public void setup() {
-        itemsData.setValue(methods.createList());
+        itemsData.setValue(methods.createList(false));
         buttonText.setValue(R.string.button_start);
     }
 

@@ -27,15 +27,14 @@ public class BenchmarkDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        BenchmarkData oldBenchmark = oldList.get(oldItemPosition);
-        BenchmarkData newBenchmark = newList.get(newItemPosition);
-        return oldBenchmark.collectionName==newBenchmark.collectionName && oldBenchmark.operation == newBenchmark.operation;
+        final BenchmarkData oldBenchmark = oldList.get(oldItemPosition);
+        final BenchmarkData newBenchmark = newList.get(newItemPosition);
+        return oldBenchmark.collectionName == newBenchmark.collectionName
+                && oldBenchmark.operation == newBenchmark.operation;
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        BenchmarkData oldBenchmark = oldList.get(oldItemPosition);
-        BenchmarkData newBenchmark = newList.get(newItemPosition);
-        return oldBenchmark.equals(newBenchmark);
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 }

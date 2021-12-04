@@ -19,27 +19,27 @@ public class MapMethods extends ViewModel implements IndexRelatedMethods {
     }
 
     @Override
-    public List<BenchmarkData> createList() {
+    public List<BenchmarkData> createList(boolean isProgress) {
         final List<BenchmarkData> list = new ArrayList<>();
-        list.add(new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.tree_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds));
+        list.add(new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, isProgress));
+        list.add(new BenchmarkData(R.string.tree_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, isProgress));
 
-        list.add(new BenchmarkData(R.string.hash_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.tree_map, R.string.search, R.string.notApplicable, R.string.milliseconds));
+        list.add(new BenchmarkData(R.string.hash_map, R.string.search, R.string.notApplicable, R.string.milliseconds, isProgress));
+        list.add(new BenchmarkData(R.string.tree_map, R.string.search, R.string.notApplicable, R.string.milliseconds, isProgress));
 
-        list.add(new BenchmarkData(R.string.hash_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds));
-        list.add(new BenchmarkData(R.string.tree_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds));
+        list.add(new BenchmarkData(R.string.hash_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds, isProgress));
+        list.add(new BenchmarkData(R.string.tree_map, R.string.remove_from_map, R.string.notApplicable, R.string.milliseconds, isProgress));
         return list;
     }
 
     @Override
     public double measureTime(BenchmarkData item, int iterations) {
         double startTime;
-        Map<String, String> measuredMap;
+        final Map<String, String> measuredMap;
         if (item.collectionName == R.string.hash_map) {
-            measuredMap= new HashMap<>();
+            measuredMap = new HashMap<>();
         } else {
-            measuredMap= new TreeMap<>();
+            measuredMap = new TreeMap<>();
         }
         for (int i = 0; i < iterations; i++) {
             measuredMap.put("Key " + i, "Value" + i);
@@ -60,7 +60,6 @@ public class MapMethods extends ViewModel implements IndexRelatedMethods {
                 measuredMap.remove("Key " + i);
             }
         }
-        double endTime = (System.nanoTime() - startTime)/1_000_000;
-        return endTime;
+        return (System.nanoTime() - startTime) / 1_000_000;
     }
 }

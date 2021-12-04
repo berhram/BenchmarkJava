@@ -1,6 +1,6 @@
 package com.velvet.collectionsandmaps.model;
 
-import androidx.annotation.Nullable;
+import java.util.Objects;
 
 public class BenchmarkData {
 
@@ -8,14 +8,15 @@ public class BenchmarkData {
     public final int operation;
     public final int defaultValue;
     public final int measureUnits;
-    private boolean progressState = false;
+    public final boolean progressState;
     private double time = 0;
 
-    public BenchmarkData(int collectionName, int operation, int defaultValue, int measureUnits) {
+    public BenchmarkData(int collectionName, int operation, int defaultValue, int measureUnits, boolean isProgress) {
         this.collectionName = collectionName;
         this.operation = operation;
         this.defaultValue = defaultValue;
         this.measureUnits = measureUnits;
+        this.progressState = isProgress;
     }
 
     public boolean isInProgress() {
@@ -30,20 +31,22 @@ public class BenchmarkData {
         return time;
     }
 
-    public void setProgressState(boolean progressState) {
-        this.progressState = progressState;
-    }
-
     public void setTime(double time) {
         this.time = time;
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        BenchmarkData benchmarkData = (BenchmarkData) obj;
-        return (benchmarkData.operation==this.operation &&
-                benchmarkData.getTime()==this.getTime() &&
-                benchmarkData.isInProgress() == this.isInProgress() &&
-                benchmarkData.collectionName == this.collectionName);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BenchmarkData that = (BenchmarkData) o;
+        return collectionName == that.collectionName && operation == that.operation
+                && defaultValue == that.defaultValue && measureUnits == that.measureUnits
+                && progressState == that.progressState && Double.compare(that.time, time) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(collectionName, operation, defaultValue, measureUnits, progressState, time);
     }
 }

@@ -8,17 +8,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.velvet.collectionsandmaps.databinding.FragmentMainBinding;
+import com.velvet.collectionsandmaps.databinding.FragmentBenchmarkBinding;
 
 public class BenchmarkFragment extends Fragment implements View.OnClickListener {
 
     private static final String INDEX = "fragment index";
 
-    private FragmentMainBinding binding;
+    private FragmentBenchmarkBinding binding;
     private CustomViewModel viewModel;
     private final BenchmarkAdapter adapter = new BenchmarkAdapter();
 
@@ -41,7 +40,7 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentMainBinding.inflate(inflater, container, false);
+        binding = FragmentBenchmarkBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 

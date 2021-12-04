@@ -10,6 +10,6 @@ public interface IndexRelatedMethods {
 
     int getNumberOfColumn();
 
-    List<BenchmarkData> createList();
+    List<BenchmarkData> createList(boolean isProgress);
 
 }
