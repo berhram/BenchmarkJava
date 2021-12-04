@@ -1,9 +1,8 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
-
-import androidx.lifecycle.ViewModel;
+package com.velvet.collectionsandmaps.model;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.CollectionMethods;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ListMethods extends ViewModel implements IndexRelatedMethods {
+public class ListMethods implements CollectionMethods {
 
     private final Random random = new Random();
 
@@ -66,42 +65,21 @@ public class ListMethods extends ViewModel implements IndexRelatedMethods {
             measuredList = new CopyOnWriteArrayList<>(Collections.nCopies(iterations - 1, "Denver"));
         }
         measuredList.add(random.nextInt(iterations), "Detroit");
-
+        startTime = System.nanoTime();
         if (item.operation == R.string.add_to_start) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.add(0, "Denver");
-            }
+            measuredList.add(0, "Denver");
         } else if (item.operation == R.string.add_to_middle) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.add(measuredList.size() / 2, "Denver");
-            }
+            measuredList.add(measuredList.size() / 2, "Denver");
         } else if (item.operation == R.string.add_to_end) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.add(measuredList.size(), "Denver");
-            }
+            measuredList.add(measuredList.size(), "Denver");
         } else if (item.operation == R.string.search) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.indexOf("Detroit");
-            }
+            measuredList.indexOf("Detroit");
         } else if (item.operation == R.string.remove_from_start) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.remove(0);
-            }
+            measuredList.remove(0);
         } else if (item.operation == R.string.remove_from_middle) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.remove(measuredList.size() / 2);
-            }
+            measuredList.remove(measuredList.size() / 2);
         } else {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredList.remove(measuredList.size() - 1);
-            }
+            measuredList.remove(measuredList.size() - 1);
         }
         return (System.nanoTime() - startTime) / 1_000_000;
     }

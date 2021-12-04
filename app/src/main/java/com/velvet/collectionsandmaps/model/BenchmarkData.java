@@ -49,4 +49,5 @@ public class BenchmarkData {
     public int hashCode() {
         return Objects.hash(collectionName, operation, defaultValue, measureUnits, progressState, time);
     }
+
 }

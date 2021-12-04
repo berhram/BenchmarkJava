@@ -1,7 +1,4 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
-
-import android.os.Handler;
-import android.os.Looper;
+package com.velvet.collectionsandmaps.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -9,10 +6,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.CollectionMethods;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +18,7 @@ public class CustomViewModel extends ViewModel {
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final IndexRelatedMethods methods;
+    private final CollectionMethods methods;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
             28,
             60L,
@@ -29,7 +26,7 @@ public class CustomViewModel extends ViewModel {
             new LinkedBlockingDeque<>(),
             r -> new Thread(r));
 
-    public CustomViewModel(IndexRelatedMethods methods) {
+    public CustomViewModel(CollectionMethods methods) {
         this.methods = methods;
     }
 
@@ -71,20 +68,18 @@ public class CustomViewModel extends ViewModel {
             itemsData.setValue(methods.createList(true));
 
             final List<BenchmarkData> measuredItems = methods.createList(false);
-            executor.execute(() -> {
-                for (BenchmarkData item : measuredItems) {
-                    executor.submit(() -> {
-                        item.setTime(methods.measureTime(item, items));
-                        itemsData.postValue(measuredItems);
-                    });
-                }
-            });
+            for (BenchmarkData item : measuredItems) {
+                executor.submit(() -> {
+                    item.setTime(methods.measureTime(item, items));
+                    itemsData.postValue(measuredItems);
+                });
+            }
         }
     }
 
 
     private boolean measurementRunning() {
-        return false;
+        return !executor.getQueue().isEmpty();
     }
 
     private void stopMeasurements() {

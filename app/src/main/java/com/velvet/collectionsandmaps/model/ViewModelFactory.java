@@ -1,8 +1,12 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
+package com.velvet.collectionsandmaps.model;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.velvet.collectionsandmaps.model.CustomViewModel;
+import com.velvet.collectionsandmaps.model.ListMethods;
+import com.velvet.collectionsandmaps.model.MapMethods;
 
 public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final int index;

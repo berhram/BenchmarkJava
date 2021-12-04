@@ -1,17 +1,19 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
-
-import androidx.lifecycle.ViewModel;
+package com.velvet.collectionsandmaps.model;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.CollectionMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
-public class MapMethods extends ViewModel implements IndexRelatedMethods {
+public class MapMethods implements CollectionMethods {
+
+    private final Random random = new Random();
 
     @Override
     public int getNumberOfColumn() {
@@ -33,7 +35,7 @@ public class MapMethods extends ViewModel implements IndexRelatedMethods {
     }
 
     @Override
-    public double measureTime(BenchmarkData item, int iterations) {
+    public double measureTime(BenchmarkData item, int items) {
         double startTime;
         final Map<String, String> measuredMap;
         if (item.collectionName == R.string.hash_map) {
@@ -41,24 +43,16 @@ public class MapMethods extends ViewModel implements IndexRelatedMethods {
         } else {
             measuredMap = new TreeMap<>();
         }
-        for (int i = 0; i < iterations; i++) {
+        for (int i = 0; i < items; i++) {
             measuredMap.put("Key " + i, "Value" + i);
         }
+        startTime = System.nanoTime();
         if (item.operation == R.string.add_to_map) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredMap.put("Key " + i, "Value " + i);
-            }
+            measuredMap.put("Key " + (items + 1), "Denver");
         } else if (item.operation == R.string.search) {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredMap.get("Key " + i);
-            }
+            measuredMap.get("Key " + random.nextInt(items));
         } else {
-            startTime = System.nanoTime();
-            for (int i = 0; i < iterations; i++) {
-                measuredMap.remove("Key " + i);
-            }
+            measuredMap.remove("Key " + random.nextInt(items));
         }
         return (System.nanoTime() - startTime) / 1_000_000;
     }
