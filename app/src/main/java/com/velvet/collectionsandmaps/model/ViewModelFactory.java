@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.velvet.collectionsandmaps.model.CustomViewModel;
-import com.velvet.collectionsandmaps.model.ListMethods;
-import com.velvet.collectionsandmaps.model.MapMethods;
+import com.velvet.collectionsandmaps.model.ListViewModelMethods;
+import com.velvet.collectionsandmaps.model.MapViewModelMethods;
 
 public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final int index;
@@ -21,9 +21,9 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass == CustomViewModel.class) {
             if (index == 0) {
-                return (T) new CustomViewModel(new ListMethods());
+                return (T) new CustomViewModel(new ListViewModelMethods());
             } else {
-                return (T) new CustomViewModel(new MapMethods());
+                return (T) new CustomViewModel(new MapViewModelMethods());
             }
 
         } else {

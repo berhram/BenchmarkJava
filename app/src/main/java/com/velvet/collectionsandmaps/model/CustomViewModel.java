@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionMethods;
+import com.velvet.collectionsandmaps.model.BenchmarkViewModelMethods;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -18,7 +18,7 @@ public class CustomViewModel extends ViewModel {
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final CollectionMethods methods;
+    private final BenchmarkViewModelMethods methods;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
             28,
             60L,
@@ -26,7 +26,7 @@ public class CustomViewModel extends ViewModel {
             new LinkedBlockingDeque<>(),
             r -> new Thread(r));
 
-    public CustomViewModel(CollectionMethods methods) {
+    public CustomViewModel(BenchmarkViewModelMethods methods) {
         this.methods = methods;
     }
 
@@ -76,7 +76,6 @@ public class CustomViewModel extends ViewModel {
             }
         }
     }
-
 
     private boolean measurementRunning() {
         return !executor.getQueue().isEmpty();

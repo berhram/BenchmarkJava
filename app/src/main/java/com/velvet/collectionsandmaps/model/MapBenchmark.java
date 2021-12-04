@@ -2,7 +2,7 @@ package com.velvet.collectionsandmaps.model;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionMethods;
+import com.velvet.collectionsandmaps.model.BenchmarkViewModelMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class MapMethods implements CollectionMethods {
+public class MapViewModelMethods implements BenchmarkViewModelMethods {
 
     private final Random random = new Random();
 
