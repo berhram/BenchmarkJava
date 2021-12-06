@@ -12,12 +12,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class FragmentViewModel extends ViewModel {
+public class BenchmarkViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final CollectionCreatorAndMeasurerInterface methods;
+    private final CollectionBenchmark methods;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
             28,
             60L,
@@ -25,7 +25,7 @@ public class FragmentViewModel extends ViewModel {
             new LinkedBlockingDeque<>(),
             r -> new Thread(r));
 
-    public FragmentViewModel(CollectionCreatorAndMeasurerInterface methods) {
+    public BenchmarkViewModel(CollectionBenchmark methods) {
         this.methods = methods;
     }
 

@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.velvet.collectionsandmaps.model.FragmentViewModel;
-import com.velvet.collectionsandmaps.model.ListCreatorAndMeasurer;
-import com.velvet.collectionsandmaps.model.MapViewModelMethods;
+import com.velvet.collectionsandmaps.model.BenchmarkViewModel;
+import com.velvet.collectionsandmaps.model.ListBenchmark;
+import com.velvet.collectionsandmaps.model.MapBenchmark;
 
 public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final int index;
@@ -19,11 +19,11 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass == FragmentViewModel.class) {
+        if (modelClass == BenchmarkViewModel.class) {
             if (index == 0) {
-                return (T) new FragmentViewModel(new ListCreatorAndMeasurer());
+                return (T) new BenchmarkViewModel(new ListBenchmark());
             } else {
-                return (T) new FragmentViewModel(new MapViewModelMethods());
+                return (T) new BenchmarkViewModel(new MapBenchmark());
             }
 
         } else {

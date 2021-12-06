@@ -2,7 +2,7 @@ package com.velvet.collectionsandmaps.model;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionCreatorAndMeasurerInterface;
+import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ListCreatorAndMeasurer implements CollectionCreatorAndMeasurerInterface {
+public class ListBenchmark implements CollectionBenchmark {
 
     private final Random random = new Random();
 
