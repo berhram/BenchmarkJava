@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.BenchmarkViewModelMethods;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +12,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class BenchmarkFragmentViewModel extends ViewModel {
+public class FragmentViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final BenchmarkViewModelMethods methods;
+    private final CollectionCreatorAndMeasurerInterface methods;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
             28,
             60L,
@@ -27,7 +25,7 @@ public class BenchmarkFragmentViewModel extends ViewModel {
             new LinkedBlockingDeque<>(),
             r -> new Thread(r));
 
-    public BenchmarkFragmentViewModel(BenchmarkViewModelMethods methods) {
+    public FragmentViewModel(CollectionCreatorAndMeasurerInterface methods) {
         this.methods = methods;
     }
 
@@ -72,7 +70,7 @@ public class BenchmarkFragmentViewModel extends ViewModel {
             for (BenchmarkData item : measuredItems) {
                 executor.submit(() -> {
                     item.setTime(methods.measureTime(item, items));
-                    List tempList = itemsData.getValue();
+                    ArrayList tempList = (ArrayList) itemsData.getValue();
                     tempList.set(measuredItems.indexOf(item), item);
                     itemsData.postValue(tempList);
                     if (executor.getCompletedTaskCount()%(measuredItems.size()-1)==0) {
@@ -84,7 +82,7 @@ public class BenchmarkFragmentViewModel extends ViewModel {
     }
 
     private boolean measurementRunning() {
-        return !(executor.getActiveCount()==0);
+        return executor.getActiveCount()!=0;
     }
 
     private void stopMeasurements() {

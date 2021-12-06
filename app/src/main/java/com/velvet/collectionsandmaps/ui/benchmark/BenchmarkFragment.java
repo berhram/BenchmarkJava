@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.velvet.collectionsandmaps.databinding.FragmentBenchmarkBinding;
-import com.velvet.collectionsandmaps.model.BenchmarkFragmentViewModel;
+import com.velvet.collectionsandmaps.model.FragmentViewModel;
 import com.velvet.collectionsandmaps.model.ViewModelFactory;
 
 public class BenchmarkFragment extends Fragment implements View.OnClickListener {
@@ -20,7 +20,7 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
     private static final String INDEX = "fragment index";
 
     private FragmentBenchmarkBinding binding;
-    private BenchmarkFragmentViewModel viewModel;
+    private FragmentViewModel viewModel;
     private final BenchmarkAdapter adapter = new BenchmarkAdapter();
 
     public static BenchmarkFragment newInstance(int index) {
@@ -34,7 +34,7 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(BenchmarkFragmentViewModel.class);
+        viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(FragmentViewModel.class);
         viewModel.setup();
         viewModel.getItemsData().observe(this, adapter::setItems);
     }

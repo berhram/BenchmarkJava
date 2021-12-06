@@ -2,7 +2,7 @@ package com.velvet.collectionsandmaps.model;
 
 import java.util.List;
 
-public interface BenchmarkViewModelMethods {
+public interface CollectionCreatorAndMeasurerInterface {
 
     double measureTime(BenchmarkData item, int iterations);
 
