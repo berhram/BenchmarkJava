@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Collections and maps</string>
+    <string-array name="tabTitles">
+        <item>Collections</item>
+        <item>Maps</item>
+    </string-array>
+    <string name="operations">Operations</string>
+    <string name="threads">Threads</string>
+    <string name="button_start">Start</string>
+    <string name="button_stop">Stop</string>
+    <string name="collections">Collections</string>
+    <string name="maps">Maps</string>
+    <string name="milliseconds">ms</string>
+    <string name="notApplicable">N/A</string>
+    <string name="benchmark_title" formatted="false">%s %s</string>
+    <string name="benchmark_time" formatted="false">%s %s</string>
+    <string name="array_list">ArrayList</string>
+    <string name="linked_list">LinkedList</string>
+    <string name="copy_on_write_list">CopyOnWriteArrayList</string>
+    <string name="add_to_start">Adding to start in</string>
+    <string name="add_to_middle">Adding to middle in</string>
+    <string name="add_to_end">Adding to end in</string>
+    <string name="search">Search in</string>
+    <string name="remove_from_start">Removing from start in</string>
+    <string name="remove_from_middle">Removing from middle in</string>
+    <string name="remove_from_end">Removing from end in</string>
+    <string name="tree_map">TreeMap</string>
+    <string name="hash_map">HashMap</string>
+    <string name="add_to_map">Adding to</string>
+    <string name="remove_from_map">Removing from</string>
+    <string name="invalid_number">Number is invalid!</string>
+</resources>
