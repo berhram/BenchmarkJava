@@ -1,10 +1,9 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.ui.benchmark;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.velvet.collectionsandmaps.model.BenchmarkViewModel;
 import com.velvet.collectionsandmaps.model.ListBenchmark;
 import com.velvet.collectionsandmaps.model.MapBenchmark;
 

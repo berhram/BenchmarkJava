@@ -1,10 +1,12 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.ui.benchmark;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
+import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.ArrayList;
 import java.util.List;
