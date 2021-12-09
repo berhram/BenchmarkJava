@@ -72,7 +72,7 @@ public class BenchmarkViewModel extends ViewModel {
             for (BenchmarkData item : measuredItems) {
                 executor.submit(() -> {
                     item.setTime(methods.measureTime(item, items));
-                    ArrayList tempList = (ArrayList) itemsData.getValue();
+                    ArrayList<BenchmarkData> tempList = (ArrayList<BenchmarkData>) itemsData.getValue();
                     tempList.set(measuredItems.indexOf(item), item);
                     itemsData.postValue(tempList);
                     if (executor.getCompletedTaskCount()%(measuredItems.size()-1)==0) {
