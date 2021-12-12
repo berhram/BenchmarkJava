@@ -8,7 +8,7 @@ public class BenchmarkData {
     public final int operation;
     public final int defaultValue;
     public final int measureUnits;
-    public final boolean progressState;
+    private boolean progressState;
     private double time = 0;
 
     public BenchmarkData(int collectionName, int operation, int defaultValue, int measureUnits, boolean isProgress) {
@@ -35,6 +35,10 @@ public class BenchmarkData {
         this.time = time;
     }
 
+    public void setProgressState(boolean progressState) {
+        this.progressState = progressState;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,7 +51,7 @@ public class BenchmarkData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(collectionName, operation, defaultValue, measureUnits, progressState, time);
+        return Objects.hash(collectionName, operation);
     }
 
 }

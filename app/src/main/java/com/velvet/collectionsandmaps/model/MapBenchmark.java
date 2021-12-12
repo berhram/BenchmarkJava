@@ -1,8 +1,6 @@
 package com.velvet.collectionsandmaps.model;
 
 import com.velvet.collectionsandmaps.R;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.ArrayList;
 import java.util.HashMap;

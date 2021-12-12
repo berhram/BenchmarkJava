@@ -1,5 +1,7 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,9 +12,8 @@ import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.core.Observable;
 
 public class BenchmarkViewModel extends ViewModel {
 
@@ -20,12 +21,6 @@ public class BenchmarkViewModel extends ViewModel {
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
     private final CollectionBenchmark methods;
-    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
-            28,
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingDeque<>(),
-            r -> new Thread(r));
 
     public BenchmarkViewModel(CollectionBenchmark methods) {
         this.methods = methods;
@@ -66,29 +61,34 @@ public class BenchmarkViewModel extends ViewModel {
             buttonText.setValue(R.string.button_start);
         } else {
             buttonText.setValue(R.string.button_stop);
-            itemsData.setValue(methods.createList(true));
-
-            final List<BenchmarkData> measuredItems = methods.createList(false);
-            for (BenchmarkData item : measuredItems) {
-                executor.submit(() -> {
-                    item.setTime(methods.measureTime(item, items));
-                    List<BenchmarkData> tempList = itemsData.getValue();
-                    tempList.set(measuredItems.indexOf(item), item);
-                    itemsData.postValue(tempList);
-                    if (executor.getCompletedTaskCount()%(measuredItems.size()-1)==0) {
-                        buttonText.postValue(R.string.button_start);
-                    }
-                });
+            ArrayList<Integer> posList = new ArrayList<>();
+            for (int i = 0; i < itemsData.getValue().size(); i++) {
+                posList.add(itemsData.getValue().get(i).hashCode());
             }
+            itemsData.setValue(methods.createList(true));
+            Observable.fromIterable(itemsData.getValue()).subscribe(
+                    benchmarkData -> {
+                        benchmarkData.setTime(methods.measureTime(benchmarkData, items));
+                        benchmarkData.setProgressState(false);
+                        List<BenchmarkData> tempList = itemsData.getValue();
+                        tempList.set(posList.indexOf(benchmarkData.hashCode()), benchmarkData);
+                        itemsData.postValue(tempList);
+                        },
+                    throwable -> {
+                        Log.e("Error", throwable.getMessage());
+                        },
+                    () -> {
+                        buttonText.setValue(R.string.button_start);
+                    });
         }
     }
 
     private boolean measurementRunning() {
-        return executor.getActiveCount()!=0;
+        return false;
     }
 
     private void stopMeasurements() {
-        executor.shutdown();
+
     }
 
     @Override
