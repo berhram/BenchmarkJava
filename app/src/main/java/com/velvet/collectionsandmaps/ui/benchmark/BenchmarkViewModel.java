@@ -10,10 +10,16 @@ import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BenchmarkViewModel extends ViewModel {
 
@@ -21,6 +27,7 @@ public class BenchmarkViewModel extends ViewModel {
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
     private final CollectionBenchmark methods;
+    private final Scheduler scheduler = Schedulers.io();
 
     public BenchmarkViewModel(CollectionBenchmark methods) {
         this.methods = methods;
@@ -61,34 +68,40 @@ public class BenchmarkViewModel extends ViewModel {
             buttonText.setValue(R.string.button_start);
         } else {
             buttonText.setValue(R.string.button_stop);
-            ArrayList<Integer> posList = new ArrayList<>();
-            for (int i = 0; i < itemsData.getValue().size(); i++) {
-                posList.add(itemsData.getValue().get(i).hashCode());
-            }
             itemsData.setValue(methods.createList(true));
-            Observable.fromIterable(itemsData.getValue()).subscribe(
-                    benchmarkData -> {
-                        benchmarkData.setTime(methods.measureTime(benchmarkData, items));
+            Observable.fromIterable(itemsData.getValue())
+                    .observeOn(scheduler)
+                    .map(benchmarkData -> {
                         benchmarkData.setProgressState(false);
+                        benchmarkData.setTime(methods.measureTime(benchmarkData,items));
                         List<BenchmarkData> tempList = itemsData.getValue();
-                        tempList.set(posList.indexOf(benchmarkData.hashCode()), benchmarkData);
+                        tempList.set(tempList.indexOf(benchmarkData), benchmarkData);
+                        return tempList;
+                    })
+                    .subscribe(
+                    tempList -> {
                         itemsData.postValue(tempList);
                         },
                     throwable -> {
                         Log.e("Error", throwable.getMessage());
                         },
                     () -> {
-                        buttonText.setValue(R.string.button_start);
+                        buttonText.postValue(R.string.button_start);
                     });
         }
     }
 
     private boolean measurementRunning() {
-        return false;
+        if (buttonText.getValue() == R.string.button_start) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     private void stopMeasurements() {
-
+        scheduler.shutdown();
     }
 
     @Override
