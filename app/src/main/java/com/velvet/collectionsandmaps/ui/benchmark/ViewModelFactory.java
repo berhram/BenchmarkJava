@@ -1,16 +1,11 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.velvet.collectionsandmaps.model.App;
-import com.velvet.collectionsandmaps.model.AppModule;
 import com.velvet.collectionsandmaps.model.CollectionBenchmark;
-import com.velvet.collectionsandmaps.model.ListBenchmark;
-import com.velvet.collectionsandmaps.model.MapBenchmark;
 
 import javax.inject.Inject;
 import javax.inject.Named;

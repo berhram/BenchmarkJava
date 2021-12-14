@@ -45,8 +45,7 @@ public class BenchmarkData {
         if (o == null || getClass() != o.getClass()) return false;
         BenchmarkData that = (BenchmarkData) o;
         return collectionName == that.collectionName && operation == that.operation
-                && defaultValue == that.defaultValue && measureUnits == that.measureUnits
-                && progressState == that.progressState;
+                && defaultValue == that.defaultValue && measureUnits == that.measureUnits;
     }
 
     @Override

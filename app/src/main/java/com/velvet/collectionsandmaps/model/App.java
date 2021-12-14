@@ -1,19 +1,17 @@
 package com.velvet.collectionsandmaps.model;
 
 import android.app.Application;
-import android.content.Context;
-
-import dagger.Component;
 
 public class App extends Application {
 
     private AppComponent component;
 
-    private static App instance = null;
+    private static App instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         component = DaggerAppComponent.builder().appModule(new AppModule()).build();
     }
 
@@ -22,14 +20,7 @@ public class App extends Application {
     }
 
     public static App getInstance() {
-        if (instance == null) {
-            return new App();
-        } else {
-            return instance;
-        }
+        return instance;
     }
 
-    private App() {
-
-    }
 }

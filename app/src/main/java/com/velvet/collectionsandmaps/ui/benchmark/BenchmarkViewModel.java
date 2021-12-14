@@ -1,6 +1,5 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
-import android.app.UiAutomation;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -11,21 +10,13 @@ import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.subscribers.DefaultSubscriber;
 
 public class BenchmarkViewModel extends ViewModel {
 
