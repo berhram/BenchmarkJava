@@ -32,7 +32,7 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX), getContext())).get(BenchmarkViewModel.class);
+        viewModel = new ViewModelProvider(this, new ViewModelFactory(getArguments().getInt(INDEX))).get(BenchmarkViewModel.class);
         viewModel.setup();
         viewModel.getItemsData().observe(this, adapter::setItems);
     }

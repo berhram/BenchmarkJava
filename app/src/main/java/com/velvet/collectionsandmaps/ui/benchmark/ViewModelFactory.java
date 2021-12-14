@@ -27,10 +27,10 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private final int index;
 
-    public ViewModelFactory(int index, Context context) {
+    public ViewModelFactory(int index) {
         super();
         this.index = index;
-        App.getComponent(context).inject(this);
+        App.getInstance().getComponent().inject(this);
     }
 
     @NonNull

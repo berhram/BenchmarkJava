@@ -7,7 +7,9 @@ import dagger.Component;
 
 public class App extends Application {
 
-    AppComponent component;
+    private AppComponent component;
+
+    private static App instance = null;
 
     @Override
     public void onCreate() {
@@ -15,7 +17,19 @@ public class App extends Application {
         component = DaggerAppComponent.builder().appModule(new AppModule()).build();
     }
 
-    public static AppComponent getComponent(Context context) {
-        return ((App) context.getApplicationContext()).component;
+    public AppComponent getComponent() {
+        return component;
+    }
+
+    public static App getInstance() {
+        if (instance == null) {
+            return new App();
+        } else {
+            return instance;
+        }
+    }
+
+    private App() {
+
     }
 }
