@@ -65,7 +65,7 @@ public class BenchmarkViewModel extends ViewModel {
         } else {
             itemsData.setValue(benchmark.createList(true));
             disposable.add(Observable.fromIterable(benchmark.createList(false))
-                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
                     .subscribeWith(new DisposableObserver<BenchmarkData>() {
                         @Override
                         public void onNext(@NonNull BenchmarkData benchmarkData) {
