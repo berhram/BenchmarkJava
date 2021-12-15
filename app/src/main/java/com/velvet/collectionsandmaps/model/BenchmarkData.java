@@ -1,7 +1,5 @@
 package com.velvet.collectionsandmaps.model;
 
-import java.util.Objects;
-
 public class BenchmarkData {
 
     public final int collectionName;
@@ -34,29 +32,5 @@ public class BenchmarkData {
     public void setTime(double time) {
         this.time = time;
     }
-
-    /*public void setProgressState(boolean progressState) {
-        this.progressState = progressState;
-    }
-
-     */
-/*
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BenchmarkData that = (BenchmarkData) o;
-        return collectionName == that.collectionName && operationName == that.operationName
-                && defaultValue == that.defaultValue && measureUnits == that.measureUnits && time == that.getTime();
-    }
-
- */
-/*
-    @Override
-    public int hashCode() {
-        return Objects.hash(collectionName, operationName, defaultValue, measureUnits);
-    }
-
- */
 
 }
