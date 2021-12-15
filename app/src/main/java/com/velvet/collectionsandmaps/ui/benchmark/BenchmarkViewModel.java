@@ -10,12 +10,12 @@ import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BenchmarkViewModel extends ViewModel {
@@ -64,27 +64,21 @@ public class BenchmarkViewModel extends ViewModel {
             stopMeasurements();
         } else {
             itemsData.setValue(benchmark.createList(true));
-            disposable.add(Observable.fromIterable(benchmark.createList(false))
+            List<BenchmarkData> measuredItems = benchmark.createList(false);
+            disposable.add(Observable.fromIterable(measuredItems)
+                    .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                    .subscribeWith(new DisposableObserver<BenchmarkData>() {
-                        @Override
-                        public void onNext(@NonNull BenchmarkData benchmarkData) {
-                            benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
-                            List<BenchmarkData> tempList = itemsData.getValue();
-                            tempList.set(tempList.indexOf(benchmarkData), benchmarkData);
-                            itemsData.postValue(tempList);
-                        }
-
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-                            Log.e("Error", e.getMessage());
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            buttonText.postValue(R.string.button_start);
-                        }
-                    }));
+                    .subscribe(benchmarkData -> {
+                                    buttonText.postValue(R.string.button_stop);
+                                    benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
+                                    List<BenchmarkData> tempList = itemsData.getValue();
+                                    tempList.set(measuredItems.indexOf(benchmarkData), benchmarkData);
+                                    itemsData.postValue(tempList);
+                            },
+                                throwable -> Log.e("Error", throwable.getMessage())
+                                ,
+                            () -> buttonText.postValue(R.string.button_start)
+                            ));
         }
     }
 
@@ -94,6 +88,12 @@ public class BenchmarkViewModel extends ViewModel {
 
     private void stopMeasurements() {
         disposable.clear();
+        reset();
+    }
+
+    private void reset() {
+        itemsData.setValue(benchmark.createList(false));
+        buttonText.postValue(R.string.button_start);
     }
 
     @Override

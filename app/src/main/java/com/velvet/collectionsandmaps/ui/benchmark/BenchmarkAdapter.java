@@ -1,6 +1,7 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -24,6 +25,7 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
         items.clear();
         items.addAll(inputItems);
         result.dispatchUpdatesTo(this);
+        Log.d("DiffUtil", "Updates dispatched");
     }
 
     @NonNull
@@ -53,7 +55,7 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
 
         void bind(BenchmarkData item) {
             final Context ctx = binding.getRoot().getContext();
-            binding.itemName.setText(ctx.getString(R.string.benchmark_title, ctx.getString(item.operation), ctx.getString(item.collectionName)));
+            binding.itemName.setText(ctx.getString(R.string.benchmark_title, ctx.getString(item.operationName), ctx.getString(item.collectionName)));
             final String time;
             if (item.isMeasured()) {
                 time = Double.toString(item.getTime());

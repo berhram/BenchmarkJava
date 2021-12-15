@@ -5,15 +5,15 @@ import java.util.Objects;
 public class BenchmarkData {
 
     public final int collectionName;
-    public final int operation;
+    public final int operationName;
     public final int defaultValue;
     public final int measureUnits;
     private boolean progressState;
     private double time = 0;
 
-    public BenchmarkData(int collectionName, int operation, int defaultValue, int measureUnits, boolean isProgress) {
+    public BenchmarkData(int collectionName, int operationName, int defaultValue, int measureUnits, boolean isProgress) {
         this.collectionName = collectionName;
-        this.operation = operation;
+        this.operationName = operationName;
         this.defaultValue = defaultValue;
         this.measureUnits = measureUnits;
         this.progressState = isProgress;
@@ -35,22 +35,28 @@ public class BenchmarkData {
         this.time = time;
     }
 
-    public void setProgressState(boolean progressState) {
+    /*public void setProgressState(boolean progressState) {
         this.progressState = progressState;
     }
 
+     */
+/*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BenchmarkData that = (BenchmarkData) o;
-        return collectionName == that.collectionName && operation == that.operation
-                && defaultValue == that.defaultValue && measureUnits == that.measureUnits;
+        return collectionName == that.collectionName && operationName == that.operationName
+                && defaultValue == that.defaultValue && measureUnits == that.measureUnits && time == that.getTime();
     }
 
+ */
+/*
     @Override
     public int hashCode() {
-        return Objects.hash(collectionName, operation);
+        return Objects.hash(collectionName, operationName, defaultValue, measureUnits);
     }
+
+ */
 
 }

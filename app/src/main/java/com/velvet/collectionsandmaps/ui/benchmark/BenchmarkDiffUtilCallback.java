@@ -29,8 +29,7 @@ public class BenchmarkDiffUtilCallback extends DiffUtil.Callback {
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
         final BenchmarkData oldBenchmark = oldList.get(oldItemPosition);
         final BenchmarkData newBenchmark = newList.get(newItemPosition);
-        return oldBenchmark.collectionName == newBenchmark.collectionName
-                && oldBenchmark.operation == newBenchmark.operation;
+        return oldBenchmark.hashCode() == newBenchmark.hashCode();
     }
 
     @Override

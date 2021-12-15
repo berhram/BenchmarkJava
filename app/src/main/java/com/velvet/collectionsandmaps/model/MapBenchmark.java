@@ -45,9 +45,9 @@ public class MapBenchmark implements CollectionBenchmark {
             measuredMap.put("Key " + i, "Value" + i);
         }
         startTime = System.nanoTime();
-        if (item.operation == R.string.add_to_map) {
+        if (item.operationName == R.string.add_to_map) {
             measuredMap.put("Key " + (items + 1), "Denver");
-        } else if (item.operation == R.string.search) {
+        } else if (item.operationName == R.string.search) {
             measuredMap.get("Key " + random.nextInt(items));
         } else {
             measuredMap.remove("Key " + random.nextInt(items));

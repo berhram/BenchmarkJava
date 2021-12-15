@@ -64,17 +64,17 @@ public class ListBenchmark implements CollectionBenchmark {
         }
         measuredList.add(random.nextInt(iterations), "Detroit");
         startTime = System.nanoTime();
-        if (item.operation == R.string.add_to_start) {
+        if (item.operationName == R.string.add_to_start) {
             measuredList.add(0, "Denver");
-        } else if (item.operation == R.string.add_to_middle) {
+        } else if (item.operationName == R.string.add_to_middle) {
             measuredList.add(measuredList.size() / 2, "Denver");
-        } else if (item.operation == R.string.add_to_end) {
+        } else if (item.operationName == R.string.add_to_end) {
             measuredList.add(measuredList.size(), "Denver");
-        } else if (item.operation == R.string.search) {
+        } else if (item.operationName == R.string.search) {
             measuredList.indexOf("Detroit");
-        } else if (item.operation == R.string.remove_from_start) {
+        } else if (item.operationName == R.string.remove_from_start) {
             measuredList.remove(0);
-        } else if (item.operation == R.string.remove_from_middle) {
+        } else if (item.operationName == R.string.remove_from_middle) {
             measuredList.remove(measuredList.size() / 2);
         } else {
             measuredList.remove(measuredList.size() - 1);
