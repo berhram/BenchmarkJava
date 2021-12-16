@@ -66,22 +66,24 @@ public class BenchmarkViewModel extends ViewModel {
             stopMeasurements();
         } else {
             itemsData.setValue(benchmark.createList(true));
-            List<BenchmarkData> measuredItems = benchmark.createList(false);
+            final List<BenchmarkData> measuredItems = benchmark.createList(false);
             disposable.add(Observable.fromIterable(measuredItems)
-                    .flatMap(item -> Observable.just(item)
-                        .subscribeOn(Schedulers.computation())
-                        .map(benchmarkData -> {
-                            Log.d("Thread", "Measurements thread " + Thread.currentThread().getName());
-                            benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
-                            return benchmarkData;}))
+                    .map(benchmarkData -> {
+                        Log.d("Thread", "Measurements thread " + Thread.currentThread().getName());
+                        benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
+                        return benchmarkData;
+                    })
+                    .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(benchmarkData -> {
+                                buttonText.setValue(R.string.button_stop);
                                 Log.d("Thread", "Post thread " + Thread.currentThread().getName());
-                                List tempList = new ArrayList<>(itemsData.getValue());
+                                List<BenchmarkData> tempList = new ArrayList<>(itemsData.getValue());
                                 tempList.set(measuredItems.indexOf(benchmarkData), benchmarkData);
-                                itemsData.setValue(tempList);},
+                                itemsData.setValue(tempList);
+                            },
                             throwable -> Log.e("Error", throwable.getMessage()),
-                            () -> buttonText.postValue(R.string.button_start)));
+                            () -> buttonText.setValue(R.string.button_start)));
         }
     }
 
