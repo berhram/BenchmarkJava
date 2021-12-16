@@ -1,9 +1,10 @@
 package com.velvet.collectionsandmaps.model;
 
-import android.app.Application;
-import android.content.Context;
-
 import androidx.annotation.NonNull;
+
+import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
+import com.velvet.collectionsandmaps.model.benchmark.ListBenchmark;
+import com.velvet.collectionsandmaps.model.benchmark.MapBenchmark;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -18,7 +19,7 @@ public class AppModule {
     @Singleton
     @NonNull
     @Named("ListBenchmark")
-    CollectionBenchmark providesListBenchmark() {
+    Benchmarks providesListBenchmark() {
         return new ListBenchmark();
     }
 
@@ -26,7 +27,7 @@ public class AppModule {
     @Singleton
     @NonNull
     @Named("MapBenchmark")
-    CollectionBenchmark providesMapBenchmark() {
+    Benchmarks providesMapBenchmark() {
         return new MapBenchmark();
     }
 }

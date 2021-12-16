@@ -1,4 +1,4 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.model.benchmark;
 
 import androidx.annotation.Nullable;
 
@@ -10,7 +10,7 @@ public class BenchmarkData {
     public final int operationName;
     public final int defaultValue;
     public final int measureUnits;
-    private final boolean progressState;
+    public final boolean isInProgress;
     private double time = 0;
 
     public BenchmarkData(int collectionName, int operationName, int defaultValue, int measureUnits, boolean isProgress) {
@@ -18,11 +18,7 @@ public class BenchmarkData {
         this.operationName = operationName;
         this.defaultValue = defaultValue;
         this.measureUnits = measureUnits;
-        this.progressState = isProgress;
-    }
-
-    public boolean isInProgress() {
-        return progressState;
+        this.isInProgress = isProgress;
     }
 
     public boolean isMeasured() {
@@ -43,11 +39,12 @@ public class BenchmarkData {
         if (obj == null || getClass() != obj.getClass()) return false;
         BenchmarkData that = (BenchmarkData) obj;
         return collectionName == that.collectionName && operationName == that.operationName
-                && defaultValue == that.defaultValue && measureUnits == that.measureUnits;
+                && defaultValue == that.defaultValue && measureUnits == that.measureUnits
+                && isInProgress == that.isInProgress && time == that.time;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(collectionName, operationName, defaultValue, measureUnits, time);
+        return Objects.hash(collectionName, operationName, defaultValue, measureUnits, time, isInProgress);
     }
 }

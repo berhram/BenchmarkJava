@@ -1,7 +1,5 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
-import static io.reactivex.rxjava3.internal.operators.observable.ObservableBlockingSubscribe.subscribe;
-
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,8 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionBenchmark;
+import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
+import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +23,10 @@ public class BenchmarkViewModel extends ViewModel {
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final CollectionBenchmark benchmark;
+    private final Benchmarks benchmark;
     private final CompositeDisposable disposable = new CompositeDisposable();
 
-    public BenchmarkViewModel(CollectionBenchmark benchmark) {
+    public BenchmarkViewModel(Benchmarks benchmark) {
         this.benchmark = benchmark;
     }
 
@@ -68,18 +66,14 @@ public class BenchmarkViewModel extends ViewModel {
             itemsData.setValue(benchmark.createList(true));
             final List<BenchmarkData> measuredItems = benchmark.createList(false);
             disposable.add(Observable.fromIterable(measuredItems)
-                    .map(benchmarkData -> {
-                        Log.d("Thread", "Measurements thread " + Thread.currentThread().getName());
-                        benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
-                        return benchmarkData;
-                    })
+                    .doOnNext(item -> item.setTime(benchmark.measureTime(item, items)))
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(benchmarkData -> {
                                 buttonText.setValue(R.string.button_stop);
-                                Log.d("Thread", "Post thread " + Thread.currentThread().getName());
-                                List<BenchmarkData> tempList = new ArrayList<>(itemsData.getValue());
-                                tempList.set(measuredItems.indexOf(benchmarkData), benchmarkData);
+                                final List<BenchmarkData> tempList = new ArrayList<>(itemsData.getValue());
+                                final int i = measuredItems.indexOf(benchmarkData);
+                                tempList.set(i, benchmarkData);
                                 itemsData.setValue(tempList);
                             },
                             throwable -> Log.e("Error", throwable.getMessage()),
@@ -88,7 +82,7 @@ public class BenchmarkViewModel extends ViewModel {
     }
 
     private boolean measurementRunning() {
-        return disposable.size()!=0;
+        return disposable.size() != 0;
     }
 
     private void stopMeasurements() {

@@ -1,4 +1,4 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.model.benchmark;
 
 import com.velvet.collectionsandmaps.R;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ListBenchmark implements CollectionBenchmark {
+public class ListBenchmark implements Benchmarks {
 
     private final Random random = new Random();
 

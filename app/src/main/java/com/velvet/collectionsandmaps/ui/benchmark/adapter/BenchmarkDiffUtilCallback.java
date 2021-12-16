@@ -1,8 +1,8 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
+package com.velvet.collectionsandmaps.ui.benchmark.adapter;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
 
 import java.util.List;
 

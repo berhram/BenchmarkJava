@@ -1,7 +1,6 @@
-package com.velvet.collectionsandmaps.ui.benchmark;
+package com.velvet.collectionsandmaps.ui.benchmark.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.databinding.ItemBenchmarksBinding;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
+import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +20,11 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
     private final List<BenchmarkData> items = new ArrayList<>();
 
     public void setItems(List<BenchmarkData> inputItems) {
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new BenchmarkDiffUtilCallback(items, inputItems));
+        final List<BenchmarkData> oldList = new ArrayList<>(items);
         items.clear();
         items.addAll(inputItems);
-        result.dispatchUpdatesTo(this);
-        Log.d("DiffUtil", "Updates dispatched");
+        DiffUtil.calculateDiff(new BenchmarkDiffUtilCallback(oldList, items))
+                .dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -63,11 +62,10 @@ public class BenchmarkAdapter extends RecyclerView.Adapter<BenchmarkAdapter.Item
                 time = ctx.getString(item.defaultValue);
             }
             binding.itemExecutionTime.setText(ctx.getString(R.string.benchmark_time, time, ctx.getString(item.measureUnits)));
+            final float targetAlpha = item.isInProgress ? 1F : 0F;
 
-            if (item.isInProgress()) {
-                binding.itemProgressBar.animate().setDuration(500).alpha(1);
-            } else {
-                binding.itemProgressBar.setAlpha(0);
+            if (binding.itemProgressBar.getAlpha() != targetAlpha) {
+                binding.itemProgressBar.animate().alpha(targetAlpha).setDuration(500);
             }
         }
     }

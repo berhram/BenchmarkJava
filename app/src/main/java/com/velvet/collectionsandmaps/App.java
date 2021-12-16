@@ -1,12 +1,16 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps;
 
 import android.app.Application;
 
+import com.velvet.collectionsandmaps.model.AppComponent;
+import com.velvet.collectionsandmaps.model.AppModule;
+import com.velvet.collectionsandmaps.model.DaggerAppComponent;
+
 public class App extends Application {
 
-    private AppComponent component;
-
     private static App instance;
+
+    private AppComponent component;
 
     @Override
     public void onCreate() {

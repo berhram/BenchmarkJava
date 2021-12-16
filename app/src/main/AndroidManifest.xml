@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.CollectionsAndMaps"
-        android:name=".model.App">
+        android:name=".App">
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

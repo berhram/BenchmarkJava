@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.velvet.collectionsandmaps.databinding.FragmentBenchmarkBinding;
+import com.velvet.collectionsandmaps.ui.benchmark.adapter.BenchmarkAdapter;
 
 public class BenchmarkFragment extends Fragment implements View.OnClickListener {
 

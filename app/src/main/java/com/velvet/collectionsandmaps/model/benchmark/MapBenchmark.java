@@ -1,4 +1,4 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.model.benchmark;
 
 import com.velvet.collectionsandmaps.R;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class MapBenchmark implements CollectionBenchmark {
+public class MapBenchmark implements Benchmarks {
 
     private final Random random = new Random();
 

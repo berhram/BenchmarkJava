@@ -1,8 +1,8 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.model.benchmark;
 
 import java.util.List;
 
-public interface CollectionBenchmark {
+public interface Benchmarks {
 
     double measureTime(BenchmarkData item, int iterations);
 

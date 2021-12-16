@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.velvet.collectionsandmaps.model.App;
-import com.velvet.collectionsandmaps.model.CollectionBenchmark;
+import com.velvet.collectionsandmaps.App;
+import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,11 +14,11 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     @Inject
     @Named("ListBenchmark")
-    CollectionBenchmark listBenchmark;
+    Benchmarks listBenchmark;
 
     @Inject
     @Named("MapBenchmark")
-    CollectionBenchmark mapBenchmark;
+    Benchmarks mapBenchmark;
 
     private final int index;
 
