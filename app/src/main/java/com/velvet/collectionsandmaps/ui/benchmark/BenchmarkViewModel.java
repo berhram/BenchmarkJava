@@ -68,6 +68,7 @@ public class BenchmarkViewModel extends ViewModel {
             disposable.add(Observable.fromIterable(measuredItems)
                     .doOnSubscribe(d -> buttonText.postValue(R.string.button_stop))
                     .doOnNext(item -> item.setTime(benchmark.measureTime(item, items)))
+                    .doOnComplete(() -> buttonText.postValue(R.string.button_start))
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(benchmarkData -> {
@@ -77,8 +78,7 @@ public class BenchmarkViewModel extends ViewModel {
                                 itemsData.setValue(tempList);
                             },
                             throwable -> Log.e("Error", throwable.getMessage()),
-                            () -> {buttonText.setValue(R.string.button_start);
-                    disposable.clear();}));
+                            () -> disposable.clear()));
         }
     }
 
