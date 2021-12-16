@@ -1,5 +1,7 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import static io.reactivex.rxjava3.internal.operators.observable.ObservableBlockingSubscribe.subscribe;
+
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -12,6 +14,7 @@ import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -64,24 +67,25 @@ public class BenchmarkViewModel extends ViewModel {
             itemsData.setValue(benchmark.createList(true));
             List<BenchmarkData> measuredItems = benchmark.createList(false);
             disposable.add(Observable.fromIterable(measuredItems)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
+                    .flatMap(item -> Observable.just(item)
+                        .subscribeOn(Schedulers.computation())
+                        .map(benchmarkData -> {
+                            Log.d("Thread", "Measurements thread " + Thread.currentThread().getName());
+                            benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
+                            return benchmarkData;}))
+                    .observeOn(Schedulers.single())
                     .subscribe(benchmarkData -> {
-                                    buttonText.postValue(R.string.button_stop);
-                                    benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
-                                    List<BenchmarkData> tempList = itemsData.getValue();
-                                    tempList.set(measuredItems.indexOf(benchmarkData), benchmarkData);
-                                    itemsData.postValue(tempList);
-                            },
-                                throwable -> Log.e("Error", throwable.getMessage())
-                                ,
-                            () -> buttonText.postValue(R.string.button_start)
-                            ));
+                                Log.d("Thread", "Post thread " + Thread.currentThread().getName());
+                                List<BenchmarkData> tempList = itemsData.getValue();
+                                tempList.set(tempList.indexOf(benchmarkData), benchmarkData);
+                                itemsData.postValue(tempList);},
+                            throwable -> Log.e("Error", throwable.getMessage()),
+                            () -> buttonText.postValue(R.string.button_start)));
         }
     }
 
     private boolean measurementRunning() {
-        return buttonText.getValue() != R.string.button_start;
+        return disposable.size()!=0;
     }
 
     private void stopMeasurements() {
