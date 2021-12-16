@@ -1,34 +1,33 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.velvet.collectionsandmaps.R;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionBenchmark;
+import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
+import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BenchmarkViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> validationErrorData = new MutableLiveData<>();
     private final MutableLiveData<List<BenchmarkData>> itemsData = new MutableLiveData<>();
     private final MutableLiveData<Integer> buttonText = new MutableLiveData<>();
-    private final CollectionBenchmark methods;
-    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(28,
-            28,
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingDeque<>(),
-            r -> new Thread(r));
+    private final Benchmarks benchmark;
+    private final CompositeDisposable disposable = new CompositeDisposable();
 
-    public BenchmarkViewModel(CollectionBenchmark methods) {
-        this.methods = methods;
+    public BenchmarkViewModel(Benchmarks benchmark) {
+        this.benchmark = benchmark;
     }
 
     public LiveData<Integer> getButtonText() {
@@ -44,11 +43,11 @@ public class BenchmarkViewModel extends ViewModel {
     }
 
     public int getNumberOfColumn() {
-        return methods.getNumberOfColumn();
+        return benchmark.getNumberOfColumn();
     }
 
     public void setup() {
-        itemsData.setValue(methods.createList(false));
+        itemsData.setValue(benchmark.createList(false));
         buttonText.setValue(R.string.button_start);
     }
 
@@ -63,32 +62,40 @@ public class BenchmarkViewModel extends ViewModel {
 
         if (measurementRunning()) {
             stopMeasurements();
-            buttonText.setValue(R.string.button_start);
         } else {
-            buttonText.setValue(R.string.button_stop);
-            itemsData.setValue(methods.createList(true));
-
-            final List<BenchmarkData> measuredItems = methods.createList(false);
-            for (BenchmarkData item : measuredItems) {
-                executor.submit(() -> {
-                    item.setTime(methods.measureTime(item, items));
-                    List<BenchmarkData> tempList = itemsData.getValue();
-                    tempList.set(measuredItems.indexOf(item), item);
-                    itemsData.postValue(tempList);
-                    if (executor.getCompletedTaskCount()%(measuredItems.size()-1)==0) {
+            itemsData.setValue(benchmark.createList(true));
+            final List<BenchmarkData> measuredItems = benchmark.createList(false);
+            disposable.add(Observable.fromIterable(measuredItems)
+                    .doOnSubscribe(d -> buttonText.postValue(R.string.button_stop))
+                    .doOnNext(item -> item.setTime(benchmark.measureTime(item, items)))
+                    .doFinally(() -> {
                         buttonText.postValue(R.string.button_start);
-                    }
-                });
-            }
+                        disposable.clear();
+                    })
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(benchmarkData -> {
+                                final List<BenchmarkData> tempList = new ArrayList<>(itemsData.getValue());
+                                final int i = measuredItems.indexOf(benchmarkData);
+                                tempList.set(i, benchmarkData);
+                                itemsData.setValue(tempList);
+                            },
+                            throwable -> Log.e("Error", throwable.getMessage())));
         }
     }
 
     private boolean measurementRunning() {
-        return executor.getActiveCount()!=0;
+        return disposable.size() != 0;
     }
 
     private void stopMeasurements() {
-        executor.shutdown();
+        disposable.clear();
+        reset();
+    }
+
+    private void reset() {
+        itemsData.setValue(benchmark.createList(false));
+        buttonText.setValue(R.string.button_start);
     }
 
     @Override
@@ -96,6 +103,7 @@ public class BenchmarkViewModel extends ViewModel {
         if (measurementRunning()) {
             stopMeasurements();
         }
+        disposable.dispose();
         super.onCleared();
     }
 }

@@ -1,8 +1,6 @@
-package com.velvet.collectionsandmaps.model;
+package com.velvet.collectionsandmaps.model.benchmark;
 
 import com.velvet.collectionsandmaps.R;
-import com.velvet.collectionsandmaps.model.BenchmarkData;
-import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-public class MapBenchmark implements CollectionBenchmark {
+public class MapBenchmark implements Benchmarks {
 
     private final Random random = new Random();
 
@@ -47,9 +45,9 @@ public class MapBenchmark implements CollectionBenchmark {
             measuredMap.put("Key " + i, "Value" + i);
         }
         startTime = System.nanoTime();
-        if (item.operation == R.string.add_to_map) {
+        if (item.operationName == R.string.add_to_map) {
             measuredMap.put("Key " + (items + 1), "Denver");
-        } else if (item.operation == R.string.search) {
+        } else if (item.operationName == R.string.search) {
             measuredMap.get("Key " + random.nextInt(items));
         } else {
             measuredMap.remove("Key " + random.nextInt(items));
