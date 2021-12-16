@@ -66,18 +66,19 @@ public class BenchmarkViewModel extends ViewModel {
             itemsData.setValue(benchmark.createList(true));
             final List<BenchmarkData> measuredItems = benchmark.createList(false);
             disposable.add(Observable.fromIterable(measuredItems)
+                    .doOnSubscribe(d -> buttonText.postValue(R.string.button_stop))
                     .doOnNext(item -> item.setTime(benchmark.measureTime(item, items)))
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(benchmarkData -> {
-                                buttonText.setValue(R.string.button_stop);
                                 final List<BenchmarkData> tempList = new ArrayList<>(itemsData.getValue());
                                 final int i = measuredItems.indexOf(benchmarkData);
                                 tempList.set(i, benchmarkData);
                                 itemsData.setValue(tempList);
                             },
                             throwable -> Log.e("Error", throwable.getMessage()),
-                            () -> buttonText.setValue(R.string.button_start)));
+                            () -> {buttonText.setValue(R.string.button_start);
+                    disposable.clear();}));
         }
     }
 
@@ -92,7 +93,7 @@ public class BenchmarkViewModel extends ViewModel {
 
     private void reset() {
         itemsData.setValue(benchmark.createList(false));
-        buttonText.postValue(R.string.button_start);
+        buttonText.setValue(R.string.button_start);
     }
 
     @Override
@@ -100,6 +101,7 @@ public class BenchmarkViewModel extends ViewModel {
         if (measurementRunning()) {
             stopMeasurements();
         }
+        disposable.dispose();
         super.onCleared();
     }
 }

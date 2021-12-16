@@ -1,9 +1,12 @@
 package com.velvet.collectionsandmaps.ui.benchmark;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,6 +67,8 @@ public class BenchmarkFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
+        InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
         viewModel.tryToMeasure(binding.operationsInput.getText().toString());
     }
 }
