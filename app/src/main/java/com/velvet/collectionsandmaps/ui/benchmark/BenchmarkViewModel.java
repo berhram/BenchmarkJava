@@ -12,6 +12,7 @@ import com.velvet.collectionsandmaps.R;
 import com.velvet.collectionsandmaps.model.BenchmarkData;
 import com.velvet.collectionsandmaps.model.CollectionBenchmark;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -73,12 +74,12 @@ public class BenchmarkViewModel extends ViewModel {
                             Log.d("Thread", "Measurements thread " + Thread.currentThread().getName());
                             benchmarkData.setTime(benchmark.measureTime(benchmarkData, items));
                             return benchmarkData;}))
-                    .observeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(benchmarkData -> {
                                 Log.d("Thread", "Post thread " + Thread.currentThread().getName());
-                                List<BenchmarkData> tempList = itemsData.getValue();
-                                tempList.set(tempList.indexOf(benchmarkData), benchmarkData);
-                                itemsData.postValue(tempList);},
+                                List tempList = new ArrayList<>(itemsData.getValue());
+                                tempList.set(measuredItems.indexOf(benchmarkData), benchmarkData);
+                                itemsData.setValue(tempList);},
                             throwable -> Log.e("Error", throwable.getMessage()),
                             () -> buttonText.postValue(R.string.button_start)));
         }
