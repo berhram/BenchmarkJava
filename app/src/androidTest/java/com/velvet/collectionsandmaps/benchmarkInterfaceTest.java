@@ -1,51 +1,45 @@
 package com.velvet.collectionsandmaps;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import android.app.Activity;
-import android.os.Bundle;
+import static org.hamcrest.Matchers.allOf;
 
-import androidx.fragment.app.Fragment;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.velvet.collectionsandmaps.ui.MainActivity;
-import com.velvet.collectionsandmaps.ui.PagerAdapter;
 
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class benchmarkInterfaceTest {
-
-    MainActivity activity;
-    FragmentStateAdapter adapter;
 
     @Rule
     public ActivityScenarioRule<MainActivity> mainActivityActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
     public void testListBenchmark() {
-        Espresso.onView(ViewMatchers.withId(R.id.operations_input)).perform(ViewActions.typeText("1000000"));
-        Espresso.onView(ViewMatchers.withId(R.id.calculate_button)).perform(ViewActions.click());
-        Espresso.onView(Matchers.allOf(ViewMatchers.withId(R.id.recycler), ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.operations_input)).perform(typeText("1000000"));
+        onView(withId(R.id.calculate_button)).perform(click());
+        onView(allOf(withId(R.id.recycler), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+                .check(matches(isDisplayed()));
     }
-
 
     @Test
     public void testMapBenchmark() {
-
-    }
-
-    private Fragment launchFragment(int page) {
-        PagerAdapter pagerAdapter = new PagerAdapter(activity);
-        return pagerAdapter.createFragment(page);
+        onView(allOf(withId(R.id.view_pager), isDisplayed())).perform(swipeLeft());
+        onView(allOf(withId(R.id.operations_input), isClickable(),isCompletelyDisplayed())).perform(typeText("1000000"));
+        onView(allOf(withId(R.id.calculate_button), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.recycler), isDisplayed()))
+                .check(matches(isDisplayed()));
     }
 }
