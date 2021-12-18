@@ -68,4 +68,16 @@ public class ViewModelTest {
         Mockito.when(benchmark.getNumberOfColumn()).thenReturn(Mocks.getNumberOfColumn());
         Assert.assertEquals(3, viewModel.getNumberOfColumn());
     }
+
+    @Test
+    public void getButtonText() {
+    }
+
+    @Test
+    public void getValidationErrorData() {
+    }
+
+    @Test
+    public void getItemsData() {
+    }
 }
