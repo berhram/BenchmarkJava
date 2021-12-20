@@ -10,9 +10,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.view.View;
+import static com.velvet.collectionsandmaps.MatchersAndActions.isSelectedTabTitleCorrect;
+import static com.velvet.collectionsandmaps.MatchersAndActions.selectTabAtIndex;
 
-import androidx.test.espresso.ViewAction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -30,10 +30,11 @@ public class BenchmarkTest {
 
     @Test
     public void tabsAreClickable() {
+        Matcher firstItem = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name);
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(1));
-        onView(new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name)).check(matches(withText("Adding to HashMap")));
+        onView(firstItem).check(matches(withText("Adding to HashMap")));
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(0));
-        onView(new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name)).check(matches(withText("Adding to start in ArrayList")));
+        onView(firstItem).check(matches(withText("Adding to start in ArrayList")));
     }
 
     @Test
@@ -51,13 +52,9 @@ public class BenchmarkTest {
         onView(withId(R.id.operations_input)).check(matches(hasErrorText("Number is invalid!")));
     }
 
-    public Matcher<View> isSelectedTabTitleCorrect(final String title) {
-        return new TabMatcher(title);
-    }
 
 
-    private ViewAction selectTabAtIndex(int index) {
-        return (ViewAction) new TabClick(index);
-    }
+
+
 
 }
