@@ -36,20 +36,12 @@ public class ViewModelTest {
 
     Benchmarks mockBenchmark = new MockBenchmark();
 
-    Observer<List<BenchmarkData>> mockDataObserver;
-    Observer<Integer> mockErrorObserver;
-    Observer<Integer> mockButtonTextObserver;
+    //TODO implement rule rxandroidplugins
 
     @Before
     public void setUp() throws Exception{
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
         viewModel = new BenchmarkViewModel(mockBenchmark);
-        mockDataObserver = mock(Observer.class);
-        viewModel.getItemsData().observeForever(mockDataObserver);
-        mockErrorObserver = mock(Observer.class);
-        viewModel.getValidationErrorData().observeForever(mockErrorObserver);
-        mockButtonTextObserver = mock(Observer.class);
-        viewModel.getButtonText().observeForever(mockButtonTextObserver);
     }
 
     @After
@@ -60,6 +52,12 @@ public class ViewModelTest {
 
     @Test
     public void setupTest() {
+        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);;
+        Observer<Integer> mockErrorObserver = mock(Observer.class);;
+        Observer<Integer> mockButtonTextObserver = mock(Observer.class);;
+        viewModel.getItemsData().observeForever(mockDataObserver);
+        viewModel.getValidationErrorData().observeForever(mockErrorObserver);
+        viewModel.getButtonText().observeForever(mockButtonTextObserver);
         viewModel.setup();
         assertEquals(R.string.button_start, (long) viewModel.getButtonText().getValue());
         assertEquals(new MockBenchmark().createList(false), viewModel.getItemsData().getValue());
@@ -71,6 +69,12 @@ public class ViewModelTest {
 
     @Test
     public void measurementsTestWhenAllIsOk() {
+        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);;
+        Observer<Integer> mockErrorObserver = mock(Observer.class);;
+        Observer<Integer> mockButtonTextObserver = mock(Observer.class);;
+        viewModel.getItemsData().observeForever(mockDataObserver);
+        viewModel.getValidationErrorData().observeForever(mockErrorObserver);
+        viewModel.getButtonText().observeForever(mockButtonTextObserver);
         viewModel.tryToMeasure("1000");
         verify(mockDataObserver, times(21)).onChanged(isA(List.class));
         verify(mockButtonTextObserver, times(21)).onChanged(isA(Integer.class));
@@ -81,6 +85,12 @@ public class ViewModelTest {
 
     @Test
     public void measurementsTestWhenNumberIsInvalid() {
+        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);;
+        Observer<Integer> mockErrorObserver = mock(Observer.class);;
+        Observer<Integer> mockButtonTextObserver = mock(Observer.class);;
+        viewModel.getItemsData().observeForever(mockDataObserver);
+        viewModel.getValidationErrorData().observeForever(mockErrorObserver);
+        viewModel.getButtonText().observeForever(mockButtonTextObserver);
         viewModel.tryToMeasure("aaa");
         verify(mockDataObserver, never()).onChanged(isA(List.class));
         verify(mockErrorObserver, times(1)).onChanged(isA(Integer.class));

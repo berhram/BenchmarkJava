@@ -7,9 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockBenchmark implements Benchmarks {
+    private static final int SLEEP_TIME = 1000;
+    private static final int CALCULATE_TIME = 1000;
+
+    //TODO fix InterruptedException
+
     @Override
     public double measureTime(BenchmarkData item, int iterations) {
-        return 1000;
+        Thread.sleep(SLEEP_TIME);
+        return CALCULATE_TIME;
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MapBenchmarkTest {
 
-    Benchmarks mapBenchmark = new MapBenchmark();
+    private final Benchmarks mapBenchmark = new MapBenchmark();
 
     @Test
     public void create() {

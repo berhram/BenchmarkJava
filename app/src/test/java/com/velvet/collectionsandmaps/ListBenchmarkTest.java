@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ListBenchmarkTest {
 
-    Benchmarks listBenchmark = new ListBenchmark();
+    private final Benchmarks listBenchmark = new ListBenchmark();
 
     @Test
     public void create() {
