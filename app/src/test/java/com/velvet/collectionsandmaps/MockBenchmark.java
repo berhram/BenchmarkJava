@@ -6,7 +6,7 @@ import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockListBenchmark implements Benchmarks {
+public class MockBenchmark implements Benchmarks {
     @Override
     public double measureTime(BenchmarkData item, int iterations) {
         return 1000;

@@ -90,12 +90,7 @@ public class BenchmarkViewModel extends ViewModel {
 
     private void stopMeasurements() {
         disposable.clear();
-        reset();
-    }
-
-    private void reset() {
-        itemsData.setValue(benchmark.createList(false));
-        buttonText.setValue(R.string.button_start);
+        setup();
     }
 
     @Override
