@@ -13,27 +13,19 @@ import androidx.lifecycle.Observer;
 
 import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
 import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
-import com.velvet.collectionsandmaps.model.benchmark.ListBenchmark;
-import com.velvet.collectionsandmaps.model.benchmark.MapBenchmark;
 import com.velvet.collectionsandmaps.ui.benchmark.BenchmarkViewModel;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.schedulers.TestScheduler;
 
 @RunWith(JUnit4.class)
 public class ViewModelTest {
