@@ -19,6 +19,7 @@ public class MapBenchmarkTest {
         List<BenchmarkData> testList = mapBenchmark.createList(true);
         for (int i = 0; i < testList.size(); i++) {
             Assert.assertNotEquals(0, testList.get(i).getTime());
+            Assert.assertEquals(true, testList.get(i).isInProgress);
         }
     }
 
