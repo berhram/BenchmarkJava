@@ -46,7 +46,6 @@ public class ViewModelTest {
 
     @After
     public void tearDown() throws Exception {
-
         viewModel = null;
     }
 
@@ -100,6 +99,7 @@ public class ViewModelTest {
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
 
         viewModel.tryToMeasure("aaa");
+        
         verify(mockDataObserver, never()).onChanged(isA(List.class));
         verify(mockErrorObserver, times(1)).onChanged(isA(Integer.class));
         verifyNoMoreInteractions(mockDataObserver);
