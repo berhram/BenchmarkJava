@@ -27,7 +27,10 @@ import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,20 +54,6 @@ public class ViewModelTest {
     @Captor
     ArgumentCaptor<Integer> buttonTextCaptor;
 
-    private BenchmarkViewModel viewModel;
-
-    private static final int SLEEP_TIME = 1000;
-    private static final int CALCULATE_TIME = 1000;
-
-    public double measureTime() {
-        try {
-            Thread.sleep(SLEEP_TIME);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return CALCULATE_TIME;
-    }
-
     public List<BenchmarkData> createMockList(boolean isProgress) {
         List<BenchmarkData> mockList = new ArrayList<>();
         mockList.add(new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, false));
@@ -81,16 +70,18 @@ public class ViewModelTest {
 
     @Before
     public void setUp() throws Exception{
-        viewModel = new BenchmarkViewModel(mockBenchmark);
+        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
     }
 
     @After
     public void tearDown() throws Exception {
-        viewModel = null;
+        //viewModel = null;
     }
 
     @Test
     public void setupTest() {
+        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
+
         Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
         Observer<Integer> mockErrorObserver = mock(Observer.class);
         Observer<Integer> mockButtonTextObserver = mock(Observer.class);
@@ -110,10 +101,13 @@ public class ViewModelTest {
         verify(mockButtonTextObserver, times(1)).onChanged(isA(Integer.class));
         verifyNoMoreInteractions(mockDataObserver);
         verifyNoMoreInteractions(mockButtonTextObserver);
+        verifyNoMoreInteractions(mockBenchmark);
     }
 
     @Test
     public void measurementsTestWhenAllIsOk() {
+        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
+
         Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
         Observer<Integer> mockErrorObserver = mock(Observer.class);
         Observer<Integer> mockButtonTextObserver = mock(Observer.class);
@@ -123,7 +117,14 @@ public class ViewModelTest {
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
 
         List<BenchmarkData> mockedList = createMockList(true);
-        when(mockBenchmark.measureTime(any(), anyInt())).thenReturn(measureTime());
+        when(mockBenchmark.measureTime(any(), anyInt())).thenAnswer(invocation -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return 1000;
+        });
         when(mockBenchmark.createList(true)).thenReturn(mockedList);
 
         viewModel.tryToMeasure("1000");
@@ -135,10 +136,13 @@ public class ViewModelTest {
         assertEquals(R.string.button_start, (long) buttonTextCaptor.getValue());
         verifyNoMoreInteractions(mockDataObserver);
         verifyNoMoreInteractions(mockButtonTextObserver);
+        verifyNoMoreInteractions(mockBenchmark);
     }
 
     @Test
     public void measurementsTestWhenNumberIsInvalid() {
+        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
+
         Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
         Observer<Integer> mockErrorObserver = mock(Observer.class);
         Observer<Integer> mockButtonTextObserver = mock(Observer.class);
@@ -154,12 +158,17 @@ public class ViewModelTest {
         assertEquals(R.string.invalid_number, (long) errorCaptor.getValue());
         verifyNoMoreInteractions(mockDataObserver);
         verifyNoMoreInteractions(mockButtonTextObserver);
+        verifyNoMoreInteractions(mockBenchmark);
     }
 
     @Test
     public void numberOfColumnsIsCorrect() {
+        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
+
         when(mockBenchmark.getNumberOfColumn()).thenReturn(3);
 
         assertEquals(3, viewModel.getNumberOfColumn());
+
+        verifyNoMoreInteractions(mockBenchmark);
     }
 }
