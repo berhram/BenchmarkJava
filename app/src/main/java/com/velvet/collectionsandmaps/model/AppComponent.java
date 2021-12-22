@@ -1,7 +1,5 @@
 package com.velvet.collectionsandmaps.model;
 
-import android.app.Application;
-
 import com.velvet.collectionsandmaps.ui.benchmark.ViewModelFactory;
 
 import javax.inject.Singleton;
