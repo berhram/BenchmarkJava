@@ -2,23 +2,32 @@ package com.velvet.collectionsandmaps;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarNotVisible;
+import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isSelectedTabTitleCorrect;
 import static com.velvet.collectionsandmaps.MatchersAndActions.selectTabAtIndex;
+import static com.velvet.collectionsandmaps.MatchersAndActions.waitFor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -48,17 +57,16 @@ public class BenchmarkTest {
     @Rule
     public ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
-    private final AppComponent testAppComponent = DaggerAppComponent.builder().appModule(new TestModule()).build();
-
     @Mock
     BenchmarkViewModel mockModel = mock(BenchmarkViewModel.class);
 
     @Test
     public void tabsAreClickable() {
-        Matcher firstItem = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name);
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(1));
+        Matcher firstItem = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name);
         onView(firstItem).check(matches(withText("Adding to HashMap")));
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(0));
+        firstItem = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(0, R.id.item_name);
         onView(firstItem).check(matches(withText("Adding to start in ArrayList")));
     }
 
@@ -78,14 +86,79 @@ public class BenchmarkTest {
     }
 
     @Test
-    public void measurementsCompletedOnFirstTab() {
-
-
-        List<Matcher> recyclerViewCellsTime = new ArrayList<>();
+    public void firstListIsCorrect() {
+        List<String> expectedNames = new ArrayList<>();
+        expectedNames.add("Adding to start in ArrayList");
+        expectedNames.add("Adding to start in LinkedList");
+        expectedNames.add("Adding to start in CopyOnWriteArrayList");
+        expectedNames.add("Adding to middle in ArrayList");
+        expectedNames.add("Adding to middle in LinkedList");
+        expectedNames.add("Adding to middle in CopyOnWriteArrayList");
+        expectedNames.add("Adding to end in ArrayList");
+        expectedNames.add("Adding to end in LinkedList");
+        expectedNames.add("Adding to end in CopyOnWriteArrayList");
+        expectedNames.add("Search in ArrayList");
+        expectedNames.add("Search in LinkedList");
+        expectedNames.add("Search in CopyOnWriteArrayList");
+        expectedNames.add("Removing from start in ArrayList");
+        expectedNames.add("Removing from start in LinkedList");
+        expectedNames.add("Removing from start in CopyOnWriteArrayList");
+        expectedNames.add("Removing from middle in ArrayList");
+        expectedNames.add("Removing from middle in LinkedList");
+        expectedNames.add("Removing from middle in CopyOnWriteArrayList");
+        expectedNames.add("Removing from end in ArrayList");
+        expectedNames.add("Removing from end in LinkedList");
+        expectedNames.add("Removing from end in CopyOnWriteArrayList");
         for (int i = 0; i < 21; i++) {
-            recyclerViewCellsTime.add(new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time));
+            Matcher recyclerViewCellName = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_name);
+            onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(recyclerViewCellName).check(matches(withText(expectedNames.get(i))));
         }
-        onView(withId(R.id.operations_input)).perform(typeText("1000000"));
+    }
+
+    @Test
+    public void secondListIsCorrect() {
+        onView(withId(R.id.tabs)).perform(selectTabAtIndex(1));
+        List<String> expectedNames = new ArrayList<>();
+        expectedNames.add("Adding to HashMap");
+        expectedNames.add("Adding to TreeMap");
+        expectedNames.add("Search in HashMap");
+        expectedNames.add("Search in TreeMap");
+        expectedNames.add("Removing from HashMap");
+        expectedNames.add("Removing from TreeMap");
+        for (int i = 0; i < 6; i++) {
+            Matcher recyclerViewCellName = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_name);
+            onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(recyclerViewCellName).check(matches(withText(expectedNames.get(i))));
+        }
+    }
+
+    @Test
+    public void measurementsHasBeenInterrupted() {
+        onView(withId(R.id.operations_input)).perform(typeText("100000000"));
         onView(withId(R.id.calculate_button)).perform(click());
+        onView(isRoot()).perform(waitFor(500));
+        onView(withId(R.id.calculate_button)).perform(click());
+        onView(isRoot()).perform(waitFor(500));
+        for (int i = 0; i < 21; i++) {
+            Matcher recyclerViewCellTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            Matcher recyclerViewCellProgressBas = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(recyclerViewCellTime).check(matches(withText("N/A ms")));
+            onView(isRoot()).perform(waitFor(500));
+            onView(recyclerViewCellProgressBas).check(matches(isProgressBarNotVisible()));
+        }
+    }
+
+    @Test
+    public void measurementsCompletedOnFirstTab() {
+        onView(withId(R.id.operations_input)).perform(typeText("5000000"));
+        onView(withId(R.id.calculate_button)).perform(click());
+        for (int i = 0; i < 21; i++) {
+            Matcher recyclerViewCellProgressBas = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(recyclerViewCellProgressBas).check(matches(isProgressBarVisible()));
+            //
+        }
     }
 }

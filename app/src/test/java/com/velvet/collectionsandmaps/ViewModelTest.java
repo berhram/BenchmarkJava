@@ -75,7 +75,6 @@ public class ViewModelTest {
 
     @After
     public void tearDown() throws Exception {
-        //viewModel = null;
     }
 
     @Test
@@ -117,14 +116,7 @@ public class ViewModelTest {
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
 
         List<BenchmarkData> mockedList = createMockList(true);
-        when(mockBenchmark.measureTime(any(), anyInt())).thenAnswer(invocation -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return 1000;
-        });
+        when(mockBenchmark.measureTime(any(), anyInt())).thenAnswer();
         when(mockBenchmark.createList(true)).thenReturn(mockedList);
 
         viewModel.tryToMeasure("1000");
