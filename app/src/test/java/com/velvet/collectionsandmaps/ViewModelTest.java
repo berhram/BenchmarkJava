@@ -73,10 +73,6 @@ public class ViewModelTest {
         BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void setupTest() {
         BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
