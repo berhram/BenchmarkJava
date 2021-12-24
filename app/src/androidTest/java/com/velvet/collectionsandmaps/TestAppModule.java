@@ -1,10 +1,15 @@
 package com.velvet.collectionsandmaps;
 
+import static org.mockito.Mockito.mock;
+
 import androidx.annotation.NonNull;
 
 import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 import com.velvet.collectionsandmaps.model.benchmark.ListBenchmark;
 import com.velvet.collectionsandmaps.model.benchmark.MapBenchmark;
+import com.velvet.collectionsandmaps.ui.benchmark.ViewModelFactory;
+
+import org.mockito.Mockito;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -14,19 +19,11 @@ import dagger.Provides;
 
 @Module
 public class TestAppModule {
-    @Provides
-    @Singleton
-    @NonNull
-    @Named("ListBenchmark")
-    Benchmarks providesListBenchmark() {
-        return new ListBenchmark();
-    }
+
+    private final ViewModelFactory factory = mock(ViewModelFactory.class);
 
     @Provides
-    @Singleton
-    @NonNull
-    @Named("MapBenchmark")
-    Benchmarks providesMapBenchmark() {
-        return new MapBenchmark();
+    ViewModelFactory provideViewModelFactory() {
+        return factory;
     }
 }

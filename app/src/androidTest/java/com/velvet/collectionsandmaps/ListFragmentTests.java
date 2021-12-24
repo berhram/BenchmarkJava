@@ -12,20 +12,27 @@ import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarNotV
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.waitFor;
 
+import static org.mockito.Mockito.when;
+
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.velvet.collectionsandmaps.ui.MainActivity;
+import com.velvet.collectionsandmaps.ui.benchmark.BenchmarkViewModel;
+import com.velvet.collectionsandmaps.ui.benchmark.ViewModelFactory;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 @RunWith(AndroidJUnit4.class)
 public class ListFragmentTests {
@@ -33,9 +40,12 @@ public class ListFragmentTests {
     @Rule
     public ActivityScenarioRule<MainActivity> mainActivityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
 
+    @Inject
+    ViewModelFactory factory;
+
     @Before
     public void setUp() {
-
+        when(factory.create(BenchmarkViewModel.class)).thenReturn(factory.create(MockViewModel.class));
     }
 
     @Test
