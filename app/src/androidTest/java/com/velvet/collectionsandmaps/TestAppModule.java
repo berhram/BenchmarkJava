@@ -20,10 +20,4 @@ import dagger.Provides;
 @Module
 public class TestAppModule {
 
-    private final ViewModelFactory factory = mock(ViewModelFactory.class);
-
-    @Provides
-    ViewModelFactory provideViewModelFactory() {
-        return factory;
-    }
 }

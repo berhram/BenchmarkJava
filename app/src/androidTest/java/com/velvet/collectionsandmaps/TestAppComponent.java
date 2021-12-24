@@ -8,10 +8,7 @@ import com.velvet.collectionsandmaps.ui.benchmark.ViewModelFactory;
 
 import dagger.Component;
 
-@Component(modules = {AppModule.class, TestAppModule.class})
+@Component(modules = AppModule.class)
 public interface TestAppComponent extends AppComponent {
 
-    MockViewModel getViewModel(ListFragmentTests listFragmentTests);
-
-    MockViewModel getViewModel(MapFragmentTests mapFragmentTests);
 }
