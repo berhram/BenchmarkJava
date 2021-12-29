@@ -3,7 +3,9 @@ package com.velvet.collectionsandmaps;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -28,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -68,11 +71,6 @@ public class ViewModelTest {
     @Mock
     Benchmarks mockBenchmark;
 
-    @Before
-    public void setUp() throws Exception{
-        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
-    }
-
     @Test
     public void setupTest() {
         BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
@@ -94,6 +92,7 @@ public class ViewModelTest {
         assertEquals(createMockList(false), viewModel.getItemsData().getValue());
         verify(mockDataObserver, times(1)).onChanged(isA(List.class));
         verify(mockButtonTextObserver, times(1)).onChanged(isA(Integer.class));
+        verify(mockBenchmark, times(1)).createList(false);
         verifyNoMoreInteractions(mockDataObserver);
         verifyNoMoreInteractions(mockButtonTextObserver);
         verifyNoMoreInteractions(mockBenchmark);
@@ -101,6 +100,14 @@ public class ViewModelTest {
 
     @Test
     public void measurementsTestWhenAllIsOk() {
+        List<BenchmarkData> mockedTrueList = createMockList(true);
+        when(mockBenchmark.createList(true)).thenReturn(mockedTrueList);
+
+        List<BenchmarkData> mockedFalseList = createMockList(false);
+        when(mockBenchmark.createList(false)).thenReturn(mockedFalseList);
+
+        doAnswer(invocation -> 50D).when(mockBenchmark).measureTime(any(BenchmarkData.class), anyInt());
+
         BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
 
         Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
@@ -111,16 +118,14 @@ public class ViewModelTest {
         viewModel.getValidationErrorData().observeForever(mockErrorObserver);
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
 
-        List<BenchmarkData> mockedList = createMockList(true);
-        when(mockBenchmark.measureTime(any(), anyInt())).thenAnswer();
-        when(mockBenchmark.createList(true)).thenReturn(mockedList);
-
         viewModel.tryToMeasure("1000");
 
-        verify(mockDataObserver, times(21)).onChanged(isA(List.class));
-        //here is bug. mockDataObserver number of invocation is only 1, not 21
-        verify(mockButtonTextObserver, times(6)).onChanged(buttonTextCaptor.capture());
+        verify(mockDataObserver, times(7)).onChanged(isA(List.class));
+        verify(mockButtonTextObserver, times(2)).onChanged(buttonTextCaptor.capture());
         verify(mockErrorObserver, never()).onChanged(errorCaptor.capture());
+        verify(mockBenchmark, times(1)).createList(false);
+        verify(mockBenchmark, times(1)).createList(true);
+        verify(mockBenchmark, times(6)).measureTime(any(BenchmarkData.class), anyInt());
         assertEquals(R.string.button_start, (long) buttonTextCaptor.getValue());
         verifyNoMoreInteractions(mockDataObserver);
         verifyNoMoreInteractions(mockButtonTextObserver);
@@ -156,6 +161,7 @@ public class ViewModelTest {
         when(mockBenchmark.getNumberOfColumn()).thenReturn(3);
 
         assertEquals(3, viewModel.getNumberOfColumn());
+        verify(mockBenchmark, times(1)).getNumberOfColumn();
 
         verifyNoMoreInteractions(mockBenchmark);
     }
