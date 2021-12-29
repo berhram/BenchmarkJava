@@ -53,7 +53,6 @@ public class ListBenchmark implements Benchmarks {
 
     @Override
     public double measureTime(BenchmarkData item, int iterations) {
-        double startTime;
         final List<String> measuredList;
         if (item.collectionName == R.string.array_list) {
             measuredList = new ArrayList<>(Collections.nCopies(iterations - 1, "Denver"));
@@ -63,7 +62,7 @@ public class ListBenchmark implements Benchmarks {
             measuredList = new CopyOnWriteArrayList<>(Collections.nCopies(iterations - 1, "Denver"));
         }
         measuredList.add(random.nextInt(iterations), "Detroit");
-        startTime = System.nanoTime();
+        final double startTime = System.nanoTime();
         if (item.operationName == R.string.add_to_start) {
             measuredList.add(0, "Denver");
         } else if (item.operationName == R.string.add_to_middle) {
