@@ -59,6 +59,7 @@ public class BenchmarkTest {
 
     @Test
     public void benchmarkApplicationTest() {
+        /*
         ActivityTests.tabsAreClickable();
         ActivityTests.tabsAreSwipeableAndSwipesChangeTabs();
 
@@ -67,9 +68,12 @@ public class BenchmarkTest {
         ListFragmentTests.measurementsCompleted();
         ListFragmentTests.measurementsHasBeenInterrupted();
 
-        ListFragmentTests.listIsCorrect();
-        ListFragmentTests.invalidInputTest();
-        ListFragmentTests.measurementsCompleted();
-        ListFragmentTests.measurementsHasBeenInterrupted();
+         */
+
+        //MapFragmentTests.listIsCorrect();
+        //MapFragmentTests.invalidInputTest();
+        MapFragmentTests.measurementsCompleted();
+
+        //MapFragmentTests.measurementsHasBeenInterrupted();
     }
 }

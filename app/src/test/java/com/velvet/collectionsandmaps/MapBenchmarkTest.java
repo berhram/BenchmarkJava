@@ -45,4 +45,9 @@ public class MapBenchmarkTest {
 
         Assert.assertEquals(expectedList, testList);
     }
+
+    @Test
+    public void measureTimeWorksCorrectly() {
+        Assert.assertTrue(mapBenchmark.measureTime((new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, true)), 1000)!=0);
+    }
 }

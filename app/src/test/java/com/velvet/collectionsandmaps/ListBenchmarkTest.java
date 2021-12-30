@@ -60,4 +60,9 @@ public class ListBenchmarkTest {
         List<BenchmarkData> testList = listBenchmark.createList(false);
         Assert.assertEquals(expectedList, testList);
     }
+
+    @Test
+    public void measureTimeWorksCorrectly() {
+        Assert.assertTrue(listBenchmark.measureTime((new BenchmarkData(R.string.array_list, R.string.add_to_start, R.string.notApplicable, R.string.milliseconds, false)), 1000)!=0);
+    }
 }
