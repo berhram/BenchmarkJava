@@ -35,13 +35,18 @@ public class MapFragmentTests {
     @Test
     static public void measurementsCompleted() {
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(1));
-        onView(withId(R.id.operations_input)).perform(typeText("5000000"));
+        onView(withId(R.id.operations_input)).perform(typeText("10000"));
         onView(withId(R.id.calculate_button)).perform(click());
 
         for (int i = 0; i < 6; i++) {
             Matcher recyclerViewCellProgressBar = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
-            onView(recyclerViewCellProgressBar).check(matches(isProgressBarVisible()));
+            try {
+                onView(recyclerViewCellProgressBar).check(matches(isProgressBarVisible()));
+            } catch (AssertionError e) {
+                onView(recyclerViewCellExecutionTime).check(matches(not(withText("0 ms"))));
+            }
         }
 
         onView(isRoot()).perform(progressBarsInRvAreInvisible(R.id.recycler, 60000));
