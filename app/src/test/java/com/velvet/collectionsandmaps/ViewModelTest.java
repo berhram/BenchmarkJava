@@ -3,7 +3,6 @@ package com.velvet.collectionsandmaps;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -20,28 +19,17 @@ import com.velvet.collectionsandmaps.model.benchmark.BenchmarkData;
 import com.velvet.collectionsandmaps.model.benchmark.Benchmarks;
 import com.velvet.collectionsandmaps.ui.benchmark.BenchmarkViewModel;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.schedulers.TestScheduler;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ViewModelTest {
@@ -57,8 +45,17 @@ public class ViewModelTest {
     @Captor
     ArgumentCaptor<Integer> buttonTextCaptor;
 
-    public List<BenchmarkData> createMockList(boolean isProgress) {
-        List<BenchmarkData> mockList = new ArrayList<>();
+    @Mock
+    Benchmarks mockBenchmark;
+    private BenchmarkViewModel viewModel;
+
+    @Before
+    public void setup() {
+        viewModel = new BenchmarkViewModel(mockBenchmark);
+    }
+
+    private List<BenchmarkData> createMockList(boolean isProgress) {
+        final List<BenchmarkData> mockList = new ArrayList<>();
         mockList.add(new BenchmarkData(R.string.hash_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, isProgress));
         mockList.add(new BenchmarkData(R.string.tree_map, R.string.add_to_map, R.string.notApplicable, R.string.milliseconds, isProgress));
         mockList.add(new BenchmarkData(R.string.hash_map, R.string.search, R.string.notApplicable, R.string.milliseconds, isProgress));
@@ -68,22 +65,17 @@ public class ViewModelTest {
         return mockList;
     }
 
-    @Mock
-    Benchmarks mockBenchmark;
-
     @Test
     public void setupTest() {
-        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
-
-        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
-        Observer<Integer> mockErrorObserver = mock(Observer.class);
-        Observer<Integer> mockButtonTextObserver = mock(Observer.class);
+        final Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
+        final Observer<Integer> mockErrorObserver = mock(Observer.class);
+        final Observer<Integer> mockButtonTextObserver = mock(Observer.class);
 
         viewModel.getItemsData().observeForever(mockDataObserver);
         viewModel.getValidationErrorData().observeForever(mockErrorObserver);
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
 
-        List<BenchmarkData> mockList = createMockList(false);
+        final List<BenchmarkData> mockList = createMockList(false);
         when(mockBenchmark.createList(false)).thenReturn(mockList);
 
         viewModel.setup();
@@ -100,19 +92,17 @@ public class ViewModelTest {
 
     @Test
     public void measurementsTestWhenAllIsOk() {
-        List<BenchmarkData> mockedTrueList = createMockList(true);
+        final List<BenchmarkData> mockedTrueList = createMockList(true);
         when(mockBenchmark.createList(true)).thenReturn(mockedTrueList);
 
-        List<BenchmarkData> mockedFalseList = createMockList(false);
+        final List<BenchmarkData> mockedFalseList = createMockList(false);
         when(mockBenchmark.createList(false)).thenReturn(mockedFalseList);
 
         doAnswer(invocation -> 50D).when(mockBenchmark).measureTime(any(BenchmarkData.class), anyInt());
 
-        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
-
-        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
-        Observer<Integer> mockErrorObserver = mock(Observer.class);
-        Observer<Integer> mockButtonTextObserver = mock(Observer.class);
+        final Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
+        final Observer<Integer> mockErrorObserver = mock(Observer.class);
+        final Observer<Integer> mockButtonTextObserver = mock(Observer.class);
 
         viewModel.getItemsData().observeForever(mockDataObserver);
         viewModel.getValidationErrorData().observeForever(mockErrorObserver);
@@ -134,12 +124,10 @@ public class ViewModelTest {
 
     @Test
     public void measurementsTestWhenNumberIsInvalid() {
-        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
+        final Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
+        final Observer<Integer> mockErrorObserver = mock(Observer.class);
+        final Observer<Integer> mockButtonTextObserver = mock(Observer.class);
 
-        Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
-        Observer<Integer> mockErrorObserver = mock(Observer.class);
-        Observer<Integer> mockButtonTextObserver = mock(Observer.class);
-        
         viewModel.getItemsData().observeForever(mockDataObserver);
         viewModel.getValidationErrorData().observeForever(mockErrorObserver);
         viewModel.getButtonText().observeForever(mockButtonTextObserver);
@@ -156,8 +144,6 @@ public class ViewModelTest {
 
     @Test
     public void numberOfColumnsIsCorrect() {
-        BenchmarkViewModel viewModel = new BenchmarkViewModel(mockBenchmark);
-
         when(mockBenchmark.getNumberOfColumn()).thenReturn(3);
 
         assertEquals(3, viewModel.getNumberOfColumn());
