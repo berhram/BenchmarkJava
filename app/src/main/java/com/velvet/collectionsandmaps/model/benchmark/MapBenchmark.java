@@ -34,7 +34,6 @@ public class MapBenchmark implements Benchmarks {
 
     @Override
     public double measureTime(BenchmarkData item, int items) {
-        double startTime;
         final Map<String, String> measuredMap;
         if (item.collectionName == R.string.hash_map) {
             measuredMap = new HashMap<>();
@@ -44,7 +43,7 @@ public class MapBenchmark implements Benchmarks {
         for (int i = 0; i < items; i++) {
             measuredMap.put("Key " + i, "Value" + i);
         }
-        startTime = System.nanoTime();
+        final double startTime = System.nanoTime();
         if (item.operationName == R.string.add_to_map) {
             measuredMap.put("Key " + (items + 1), "Denver");
         } else if (item.operationName == R.string.search) {
