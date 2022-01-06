@@ -123,6 +123,39 @@ public class ViewModelTest {
     }
 
     @Test
+    public void measurementsTestWhenInterrupted() {
+        final List<BenchmarkData> mockedTrueList = createMockList(true);
+        when(mockBenchmark.createList(true)).thenReturn(mockedTrueList);
+
+        final List<BenchmarkData> mockedFalseList = createMockList(false);
+        when(mockBenchmark.createList(false)).thenReturn(mockedFalseList);
+
+        doAnswer(invocation -> {Thread.sleep(2000); return 50D;}).when(mockBenchmark).measureTime(any(BenchmarkData.class), anyInt());
+
+        final Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
+        final Observer<Integer> mockErrorObserver = mock(Observer.class);
+        final Observer<Integer> mockButtonTextObserver = mock(Observer.class);
+
+        viewModel.getItemsData().observeForever(mockDataObserver);
+        viewModel.getValidationErrorData().observeForever(mockErrorObserver);
+        viewModel.getButtonText().observeForever(mockButtonTextObserver);
+
+        viewModel.tryToMeasure("1000");
+        viewModel.tryToMeasure("1000");
+
+        verify(mockDataObserver, times(8)).onChanged(isA(List.class));
+        verify(mockButtonTextObserver, times(3)).onChanged(buttonTextCaptor.capture());
+        verify(mockErrorObserver, never()).onChanged(errorCaptor.capture());
+        verify(mockBenchmark, times(2)).createList(false);
+        verify(mockBenchmark, times(1)).createList(true);
+        verify(mockBenchmark, times(6)).measureTime(any(BenchmarkData.class), anyInt());
+        assertEquals(R.string.button_start, (long) buttonTextCaptor.getValue());
+        verifyNoMoreInteractions(mockDataObserver);
+        verifyNoMoreInteractions(mockButtonTextObserver);
+        verifyNoMoreInteractions(mockBenchmark);
+    }
+
+    @Test
     public void measurementsTestWhenNumberIsInvalid() {
         final Observer<List<BenchmarkData>> mockDataObserver = mock(Observer.class);
         final Observer<Integer> mockErrorObserver = mock(Observer.class);
