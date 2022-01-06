@@ -8,19 +8,15 @@ import static org.hamcrest.Matchers.allOf;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.util.HumanReadables;
 
 import com.google.android.material.tabs.TabLayout;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
-import java.util.concurrent.TimeoutException;
 
 public class MatchersAndActions {
     static public Matcher<View> isSelectedTabTitleCorrect(final String title) {
@@ -51,7 +47,7 @@ public class MatchersAndActions {
 
             @Override
             public String getDescription() {
-                return  String.format("No tab at index %s",Integer.toString(index));
+                return  String.format("No tab at index %s", index);
             }
 
             @Override
@@ -59,7 +55,7 @@ public class MatchersAndActions {
                 TabLayout tabLayout = (TabLayout) view;
                 TabLayout.Tab tabAtIndex = tabLayout.getTabAt(index);
                 if (tabAtIndex == null) {
-                    throw new PerformException.Builder().withCause(new Throwable(String.format("No tab at index %s",Integer.toString(index)))).build();
+                    throw new PerformException.Builder().withCause(new Throwable(String.format("No tab at index %s", index))).build();
                 }
                 tabAtIndex.select();
             }
@@ -88,13 +84,13 @@ public class MatchersAndActions {
     static public Matcher<View> isProgressBarVisible() {
         return new TypeSafeMatcher<View>() {
             public void describeTo(Description description) {
-                description.appendText(String.format("With running progressbar"));
+                description.appendText("With running progressbar");
             }
 
             public boolean matchesSafely(View view) {
                 ProgressBar progressBar = (ProgressBar) view;
                 if (progressBar == null) {
-                    throw new PerformException.Builder().withCause(new Throwable(String.format("No progressbar"))).build();
+                    throw new PerformException.Builder().withCause(new Throwable("No progressbar")).build();
                 } else {
                     return progressBar.getAlpha() != 0F;
                 }
@@ -105,60 +101,16 @@ public class MatchersAndActions {
     static public Matcher<View> isProgressBarNotVisible() {
         return new TypeSafeMatcher<View>() {
             public void describeTo(Description description) {
-                description.appendText(String.format("With stopped progressbar"));
+                description.appendText("With stopped progressbar");
             }
 
             public boolean matchesSafely(View view) {
                 ProgressBar progressBar = (ProgressBar) view;
                 if (progressBar == null) {
-                    throw new PerformException.Builder().withCause(new Throwable(String.format("No progressbar"))).build();
+                    throw new PerformException.Builder().withCause(new Throwable("No progressbar")).build();
                 } else {
                     return progressBar.getAlpha() != 1F;
                 }
-            }
-        };
-    }
-
-    public static ViewAction waitUntilProgressBarsInRvAreInvisible(final int recyclerViewId, final long timeout) {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return allOf(isDisplayed(), isAssignableFrom(RecyclerView.class));
-            }
-
-            @Override
-            public String getDescription() {
-                return "wait for a ProgressBar in RecyclerView <" + recyclerViewId + "> is hidden during " + timeout + " millis.";
-            }
-
-            @Override
-            public void perform(final UiController uiController, final View view) {
-                uiController.loopMainThreadUntilIdle();
-                final long startTime = System.currentTimeMillis();
-                final long endTime = startTime + timeout;
-                RecyclerView recyclerView = (RecyclerView) view;
-                do {
-                    int exitCount = 0;
-                    for (int i = 0; i < recyclerView.getAdapter().getItemCount(); i++) {
-                        View item = recyclerView.findViewHolderForAdapterPosition(i).itemView;
-                        if (item.findViewById(R.id.item_progress_bar).getAlpha() == 0F) {
-                            exitCount++;
-                        } else {
-                            exitCount = 0;
-                        }
-                        if (exitCount == recyclerView.getAdapter().getItemCount()) {
-                            return;
-                        }
-                    }
-                    uiController.loopMainThreadForAtLeast(50);
-                }
-                while (System.currentTimeMillis() < endTime);
-
-                throw new PerformException.Builder()
-                        .withActionDescription(this.getDescription())
-                        .withViewDescription(HumanReadables.describe(view))
-                        .withCause(new TimeoutException())
-                        .build();
             }
         };
     }

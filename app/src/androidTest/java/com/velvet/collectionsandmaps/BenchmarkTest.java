@@ -18,6 +18,7 @@ public class BenchmarkTest {
     public void benchmarkApplicationTest() {
         ActivityTests.tabsAreClickable();
         ActivityTests.tabsAreSwipeableAndSwipesChangeTabs();
+        waitTestEnd();
 
         ListFragmentTests.listIsCorrect();
         ListFragmentTests.invalidInputTest();
@@ -28,5 +29,12 @@ public class BenchmarkTest {
         MapFragmentTests.invalidInputTest();
         MapFragmentTests.measurementsCompleted();
         MapFragmentTests.measurementsHasBeenInterrupted();
+    }
+
+    private void waitTestEnd() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
     }
 }

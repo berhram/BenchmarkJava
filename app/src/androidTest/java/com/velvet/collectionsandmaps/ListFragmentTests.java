@@ -1,6 +1,7 @@
 package com.velvet.collectionsandmaps;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -11,9 +12,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarNotVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.waitFor;
-import static com.velvet.collectionsandmaps.MatchersAndActions.waitUntilProgressBarsInRvAreInvisible;
 
 import static org.hamcrest.Matchers.not;
+
+import android.view.View;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
 
@@ -26,12 +28,13 @@ import java.util.List;
 public class ListFragmentTests {
     @Test
     static public void measurementsCompleted() {
+        onView(withId(R.id.operations_input)).perform(clearText());
         onView(withId(R.id.operations_input)).perform(typeText("100000"));
         onView(withId(R.id.calculate_button)).perform(click());
 
         for (int i = 0; i < 21; i++) {
-            Matcher recyclerViewCellProgressBar = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
-            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            Matcher<View> recyclerViewCellProgressBar = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            Matcher<View> recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
             try {
                 onView(recyclerViewCellProgressBar).check(matches(isProgressBarVisible()));
@@ -40,10 +43,10 @@ public class ListFragmentTests {
             }
         }
 
-        onView(withId(R.id.recycler)).perform(waitUntilProgressBarsInRvAreInvisible(R.id.recycler, 60_000));
+        onView(isRoot()).perform(waitFor(3000));
 
         for (int i = 0; i < 21; i++) {
-            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            Matcher<View> recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
             onView(recyclerViewCellExecutionTime).check(matches(not(withText("0 ms"))));
         }
@@ -51,15 +54,15 @@ public class ListFragmentTests {
 
     @Test
     static public void measurementsHasBeenInterrupted() {
-        onView(withId(R.id.operations_input)).perform(typeText("100000000"));
+        onView(withId(R.id.operations_input)).perform(clearText());
+        onView(withId(R.id.operations_input)).perform(typeText("5000000"));
         onView(withId(R.id.calculate_button)).perform(click());
-        onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.calculate_button)).perform(click());
-        onView(isRoot()).perform(waitFor(500));
         for (int i = 0; i < 21; i++) {
-            Matcher recyclerViewCellTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
-            Matcher recyclerViewCellProgressBas = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            Matcher<View> recyclerViewCellTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            Matcher<View> recyclerViewCellProgressBas = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(isRoot()).perform(waitFor(500));
             onView(recyclerViewCellTime).check(matches(withText("N/A ms")));
             onView(recyclerViewCellProgressBas).check(matches(isProgressBarNotVisible()));
         }
@@ -90,7 +93,7 @@ public class ListFragmentTests {
         expectedNames.add("Removing from end in LinkedList");
         expectedNames.add("Removing from end in CopyOnWriteArrayList");
         for (int i = 0; i < 21; i++) {
-            Matcher recyclerViewCellName = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_name);
+            Matcher<View> recyclerViewCellName = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_name);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
             onView(recyclerViewCellName).check(matches(withText(expectedNames.get(i))));
         }
