@@ -3,7 +3,6 @@ package com.velvet.collectionsandmaps;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
@@ -14,7 +13,6 @@ import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.util.HumanReadables;
-import androidx.test.espresso.util.TreeIterables;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -121,11 +119,11 @@ public class MatchersAndActions {
         };
     }
 
-    public static ViewAction progressBarsInRvAreInvisible(final int recyclerViewId, final long timeout) {
+    public static ViewAction waitUntilProgressBarsInRvAreInvisible(final int recyclerViewId, final long timeout) {
         return new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
-                return isRoot();
+                return allOf(isDisplayed(), isAssignableFrom(RecyclerView.class));
             }
 
             @Override
@@ -138,27 +136,20 @@ public class MatchersAndActions {
                 uiController.loopMainThreadUntilIdle();
                 final long startTime = System.currentTimeMillis();
                 final long endTime = startTime + timeout;
-
-                final Matcher<View> viewMatcher = withId(recyclerViewId);
-
-                int exitCount = 0;
-
+                RecyclerView recyclerView = (RecyclerView) view;
                 do {
-                    for (View child : TreeIterables.breadthFirstViewTraversal(view)) {
-                        if (viewMatcher.matches(child)) {
-                            RecyclerView recyclerView = (RecyclerView) child;
-                            for (int i = 0; i < recyclerView.getAdapter().getItemCount(); i++) {
-                                Matcher recyclerViewCellProgressBar = new RecyclerViewMatcher(recyclerViewId).atPositionOnView(i, R.id.item_progress_bar);
-                                if (recyclerViewCellProgressBar.matches(isProgressBarNotVisible())) {
-                                    exitCount += 1;
-                                }
-                                if (exitCount == recyclerView.getAdapter().getItemCount()) {
-                                    return;
-                                }
-                            }
+                    int exitCount = 0;
+                    for (int i = 0; i < recyclerView.getAdapter().getItemCount(); i++) {
+                        View item = recyclerView.findViewHolderForAdapterPosition(i).itemView;
+                        if (item.findViewById(R.id.item_progress_bar).getAlpha() == 0F) {
+                            exitCount++;
+                        } else {
+                            exitCount = 0;
+                        }
+                        if (exitCount == recyclerView.getAdapter().getItemCount()) {
+                            return;
                         }
                     }
-
                     uiController.loopMainThreadForAtLeast(50);
                 }
                 while (System.currentTimeMillis() < endTime);

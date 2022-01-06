@@ -4,28 +4,23 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.doesNotHaveFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarNotVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarVisible;
-import static com.velvet.collectionsandmaps.MatchersAndActions.progressBarsInRvAreInvisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.selectTabAtIndex;
 import static com.velvet.collectionsandmaps.MatchersAndActions.waitFor;
+import static com.velvet.collectionsandmaps.MatchersAndActions.waitUntilProgressBarsInRvAreInvisible;
 
 import static org.hamcrest.Matchers.not;
 
-import android.util.Log;
-import android.widget.ProgressBar;
+import android.view.View;
 
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -35,7 +30,7 @@ public class MapFragmentTests {
     @Test
     static public void measurementsCompleted() {
         onView(withId(R.id.tabs)).perform(selectTabAtIndex(1));
-        onView(withId(R.id.operations_input)).perform(typeText("10000"));
+        onView(withId(R.id.operations_input)).perform(typeText("100000"));
         onView(withId(R.id.calculate_button)).perform(click());
 
         for (int i = 0; i < 6; i++) {
@@ -49,15 +44,13 @@ public class MapFragmentTests {
             }
         }
 
-        onView(isRoot()).perform(progressBarsInRvAreInvisible(R.id.recycler, 60000));
+        onView(withId(R.id.recycler)).perform(waitUntilProgressBarsInRvAreInvisible(R.id.recycler, 60_000));
 
         for (int i = 0; i < 6; i++) {
-            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            Matcher<View> recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
             onView(recyclerViewCellExecutionTime).check(matches(not(withText("0 ms"))));
         }
-
-        //TODO copy it in ListFragmentTests
     }
 
     @Test

@@ -11,6 +11,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarNotVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.isProgressBarVisible;
 import static com.velvet.collectionsandmaps.MatchersAndActions.waitFor;
+import static com.velvet.collectionsandmaps.MatchersAndActions.waitUntilProgressBarsInRvAreInvisible;
+
+import static org.hamcrest.Matchers.not;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
 
@@ -23,15 +26,29 @@ import java.util.List;
 public class ListFragmentTests {
     @Test
     static public void measurementsCompleted() {
-        onView(withId(R.id.operations_input)).perform(typeText("5000000"));
+        onView(withId(R.id.operations_input)).perform(typeText("100000"));
         onView(withId(R.id.calculate_button)).perform(click());
+
         for (int i = 0; i < 21; i++) {
-            Matcher recyclerViewCellProgressBas = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            Matcher recyclerViewCellProgressBar = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_progress_bar);
+            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
             onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
-            onView(recyclerViewCellProgressBas).check(matches(isProgressBarVisible()));
-            //
+            try {
+                onView(recyclerViewCellProgressBar).check(matches(isProgressBarVisible()));
+            } catch (AssertionError e) {
+                onView(recyclerViewCellExecutionTime).check(matches(not(withText("0 ms"))));
+            }
+        }
+
+        onView(withId(R.id.recycler)).perform(waitUntilProgressBarsInRvAreInvisible(R.id.recycler, 60_000));
+
+        for (int i = 0; i < 21; i++) {
+            Matcher recyclerViewCellExecutionTime = new RecyclerViewMatcher(R.id.recycler).atPositionOnView(i, R.id.item_execution_time);
+            onView(withId(R.id.recycler)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(recyclerViewCellExecutionTime).check(matches(not(withText("0 ms"))));
         }
     }
+
     @Test
     static public void measurementsHasBeenInterrupted() {
         onView(withId(R.id.operations_input)).perform(typeText("100000000"));
